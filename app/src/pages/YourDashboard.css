@@ -1684,6 +1684,7 @@
 @media (max-width: 768px) {
   .your-layout {
     position: relative;
+    z-index: auto !important;
   }
 
   .your-sidebar {
