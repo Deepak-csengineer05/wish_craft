@@ -924,7 +924,12 @@ export default function YourDashboard() {
                   <button
                     key={item.id}
                     className={`menu-item ${activeTab === item.id ? 'active' : ''}`}
-                    onClick={() => setActiveTab(item.id)}
+                    onClick={() => {
+                      setActiveTab(item.id);
+                      if (window.innerWidth <= 768) {
+                        setIsSidebarOpen(false);
+                      }
+                    }}
                     title={item.label}
                   >
                     <span className="menu-icon">{item.icon}</span>
