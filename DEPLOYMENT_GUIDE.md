@@ -6,18 +6,18 @@ This guide provides step-by-step instructions to push your React application to 
 
 ## Part 1: Create a New GitHub Repository
 
-Since we want to push this project to a new repository on your profile (**https://github.com/Deepak-csengineer05**), follow these steps in your browser:
+Since we want to push this project to a new repository on your profile (**https://github.com/your friend-csengineer05**), follow these steps in your browser:
 
 1. Open your browser and go to: **[https://github.com/new](https://github.com/new)**.
-2. Ensure you are logged in to your account (`Deepak-csengineer05`).
+2. Ensure you are logged in to your account (`your friend-csengineer05`).
 3. Fill in the repository details:
-   - **Repository owner**: `Deepak-csengineer05`
+   - **Repository owner**: `your friend-csengineer05`
    - **Repository name**: `lunar-gift` (or any name you prefer, e.g., `birthday-gift`)
    - **Description**: (Optional) e.g., *A beautiful, interactive lunar-themed 3D birthday experience.*
    - **Visibility**: Select **Public** so anyone can access it.
    - **Initialize repository with**: Do **NOT** check any of the options (no README, no `.gitignore`, no license). Leave them all unchecked because we already have these files locally.
 4. Click the green **Create repository** button.
-5. Copy the HTTPS clone URL from the quick setup page (it will look like: `https://github.com/Deepak-csengineer05/lunar-gift.git`).
+5. Copy the HTTPS clone URL from the quick setup page (it will look like: `https://github.com/your friend-csengineer05/lunar-gift.git`).
 
 ---
 
@@ -25,7 +25,7 @@ Since we want to push this project to a new repository on your profile (**https:
 
 Now that the new repository is created, we need to point your local repository to this new URL and push the committed code. 
 
-I am ready to run these commands for you! Just send me the URL of your new repository in the chat (e.g., `https://github.com/Deepak-csengineer05/lunar-gift.git`), and I will execute the following steps:
+I am ready to run these commands for you! Just send me the URL of your new repository in the chat (e.g., `https://github.com/your friend-csengineer05/lunar-gift.git`), and I will execute the following steps:
 
 1. **Rename branch to main** (if not already):
    ```bash

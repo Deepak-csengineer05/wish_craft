@@ -821,7 +821,7 @@ export default function CreatorHub() {
                   className="ch-input"
                   value={creatorName}
                   onChange={(e) => setCreatorName(e.target.value)}
-                  placeholder="e.g. Deepak"
+                  placeholder="e.g. Alex"
                   required
                 />
               </div>

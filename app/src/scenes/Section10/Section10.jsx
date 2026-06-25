@@ -13,7 +13,7 @@ const BASE_DIALOGUE = [
     moonMood: "curious"
   },
   {
-    id: 1, 
+    id: 1,
     type: 'info',
     text: "Sorry for this, next time I assure the gift will be the best to make you smile.",
     btnText: "Next",
@@ -29,14 +29,14 @@ const BASE_DIALOGUE = [
   {
     id: 3,
     type: 'info',
-    text: "Hey pooji, for all the options, I would say only one name that is Deepak...",
+    text: "Hey , for all the options, I would say only one name that is your friend...",
     btnText: "Continue",
     moonMood: "happy"
   },
   {
     id: 4,
     type: 'input',
-    text: "Who is Deepak to you?",
+    text: "Who is your friend to you?",
     moonMood: "curious"
   },
   {
@@ -48,13 +48,13 @@ const BASE_DIALOGUE = [
   {
     id: 6,
     type: 'input',
-    text: "If you wish to say one thing to Deepak what it would be?",
+    text: "If you wish to say one thing to your friend what it would be?",
     moonMood: "happy"
   },
   {
     id: 7,
     type: 'input',
-    text: "Are you thinking like why this boy Deepak doing like this to you, what you had done for him?",
+    text: "Are you thinking like why this boy your friend doing like this to you, what you had done for him?",
     moonMood: "curious"
   },
   {
@@ -74,42 +74,42 @@ const BASE_DIALOGUE = [
 
 /* ─── Moon SVG ───────────────────────────────────── */
 function MoonFace({ mood }) {
-  const isCurious  = mood === 'curious';
-  const isTeasing  = mood === 'teasing';
-  const isExcited  = mood === 'excited';
+  const isCurious = mood === 'curious';
+  const isTeasing = mood === 'teasing';
+  const isExcited = mood === 'excited';
   const isPleading = mood === 'pleading';
 
   return (
     <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="s10-moon-svg" aria-hidden="true">
       <circle cx="100" cy="100" r="88" fill="hsla(var(--theme-hue, 198), 40%, 75%, 0.08)" />
       <circle cx="100" cy="100" r="80" fill="hsl(var(--theme-hue, 198), 25%, 93%)" />
-      <circle cx="70"  cy="75"  r="13" fill="hsl(var(--theme-hue, 198), 30%, 83%)" opacity="0.7"/>
-      <circle cx="130" cy="68"  r="9"  fill="hsl(var(--theme-hue, 198), 30%, 83%)" opacity="0.6"/>
-      <circle cx="55"  cy="120" r="8"  fill="hsl(var(--theme-hue, 198), 30%, 83%)" opacity="0.5"/>
-      <circle cx="140" cy="115" r="11" fill="hsl(var(--theme-hue, 198), 30%, 83%)" opacity="0.55"/>
-      <circle cx="105" cy="145" r="7"  fill="hsl(var(--theme-hue, 198), 30%, 83%)" opacity="0.5"/>
-      <circle cx="85"  cy="55"  r="5"  fill="hsl(var(--theme-hue, 198), 30%, 83%)" opacity="0.4"/>
+      <circle cx="70" cy="75" r="13" fill="hsl(var(--theme-hue, 198), 30%, 83%)" opacity="0.7" />
+      <circle cx="130" cy="68" r="9" fill="hsl(var(--theme-hue, 198), 30%, 83%)" opacity="0.6" />
+      <circle cx="55" cy="120" r="8" fill="hsl(var(--theme-hue, 198), 30%, 83%)" opacity="0.5" />
+      <circle cx="140" cy="115" r="11" fill="hsl(var(--theme-hue, 198), 30%, 83%)" opacity="0.55" />
+      <circle cx="105" cy="145" r="7" fill="hsl(var(--theme-hue, 198), 30%, 83%)" opacity="0.5" />
+      <circle cx="85" cy="55" r="5" fill="hsl(var(--theme-hue, 198), 30%, 83%)" opacity="0.4" />
 
       <ellipse cx="80" cy="97"
         rx={isPleading ? 10 : isExcited ? 11 : 9}
         ry={isPleading ? 12 : isExcited ? 13 : isCurious ? 11 : 10}
-        fill="#1a1a2e"/>
+        fill="#1a1a2e" />
       <ellipse cx="120" cy={isCurious ? 94 : 97}
         rx={isExcited ? 11 : 9}
         ry={isPleading ? 12 : isExcited ? 13 : isCurious ? 8 : 10}
-        fill="#1a1a2e"/>
-      <circle cx="83" cy="94" r="3" fill="white"/>
-      <circle cx="123" cy={isCurious ? 91 : 94} r="3" fill="white"/>
+        fill="#1a1a2e" />
+      <circle cx="83" cy="94" r="3" fill="white" />
+      <circle cx="123" cy={isCurious ? 91 : 94} r="3" fill="white" />
 
-      <ellipse cx="65"  cy="115" rx="13" ry="8" fill="#f4a7b9" opacity="0.6"/>
-      <ellipse cx="135" cy="115" rx="13" ry="8" fill="#f4a7b9" opacity="0.6"/>
+      <ellipse cx="65" cy="115" rx="13" ry="8" fill="#f4a7b9" opacity="0.6" />
+      <ellipse cx="135" cy="115" rx="13" ry="8" fill="#f4a7b9" opacity="0.6" />
 
       {isPleading ? (
-        <path d="M 88 122 Q 100 118 112 122" stroke="var(--violet-mid, #7b52c8)" strokeWidth="3" fill="none" strokeLinecap="round"/>
+        <path d="M 88 122 Q 100 118 112 122" stroke="var(--violet-mid, #7b52c8)" strokeWidth="3" fill="none" strokeLinecap="round" />
       ) : isTeasing ? (
-        <path d="M 88 120 Q 100 132 112 120" stroke="var(--violet-mid, #7b52c8)" strokeWidth="3" fill="none" strokeLinecap="round"/>
+        <path d="M 88 120 Q 100 132 112 120" stroke="var(--violet-mid, #7b52c8)" strokeWidth="3" fill="none" strokeLinecap="round" />
       ) : (
-        <path d="M 86 120 Q 100 133 114 120" stroke="var(--violet-mid, #7b52c8)" strokeWidth="2.5" fill="none" strokeLinecap="round"/>
+        <path d="M 86 120 Q 100 133 114 120" stroke="var(--violet-mid, #7b52c8)" strokeWidth="2.5" fill="none" strokeLinecap="round" />
       )}
     </svg>
   );
@@ -136,9 +136,9 @@ export default function Section10({ onNext }) {
   // Format conversational dialogue steps dynamically using customization
   const dialogueList = useMemo(() => {
     const creator = configData?.creatorName || configData?.chatSenderName || 'your friend';
-    const recipient = recipientName || 'Pooji';
+    const recipient = recipientName || 'Sophia';
     const list = [...BASE_DIALOGUE];
-    
+
     list[3] = {
       ...list[3],
       text: `Hey ${recipient.toLowerCase()}, for all the options, I would say only one name that is ${creator}. See how lucky you are to have such a thoughtful friend! Before moving on to the final section, I have some queries to ask you about ${creator}...`
@@ -188,7 +188,7 @@ export default function Section10({ onNext }) {
       setInputValue("");
       setStepIdx(i => isTargetNum ? targetIdx : i + 1);
       setFadeState("in");
-    }, 400); 
+    }, 400);
   };
 
   const handleOptionClick = (opt) => {
@@ -198,7 +198,7 @@ export default function Section10({ onNext }) {
       selectedOption: opt,
     });
     if (stepIdx === 0 && opt === "Yes") {
-      goToNextStep(2); 
+      goToNextStep(2);
     } else {
       goToNextStep();
     }
@@ -222,8 +222,8 @@ export default function Section10({ onNext }) {
 
       <div className="s7-starfield-container">
         {stars.map((star) => (
-          <div 
-            key={star.id} 
+          <div
+            key={star.id}
             className="s7-star"
             style={{
               top: star.top,
@@ -238,7 +238,7 @@ export default function Section10({ onNext }) {
       </div>
 
       <div className={`s10-container ${fadeState === 'out' ? 's10-faded' : ''}`}>
-        
+
         <div className="s10-moon-wrapper">
           <MoonFace mood={step?.moonMood || 'happy'} />
           <div className="s10-moon-glow" />
@@ -273,16 +273,16 @@ export default function Section10({ onNext }) {
 
           {step?.type === 'input' && (
             <form className="s10-input-form" onSubmit={handleInputSubmit}>
-              <textarea 
+              <textarea
                 className="s10-textarea"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 placeholder="Type your answer here..."
                 autoFocus
               />
-              <button 
-                type="submit" 
-                className="s10-btn s10-btn-primary" 
+              <button
+                type="submit"
+                className="s10-btn s10-btn-primary"
                 disabled={!inputValue.trim()}
               >
                 Send
