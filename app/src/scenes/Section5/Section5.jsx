@@ -107,7 +107,7 @@ export default function Section5({ onNext }) {
              </button>
            )}
            {countdown === 0 && blownCandles.length < 5 && (
-             <div className="mic-active-text" style={{ fontSize: '1.4rem', color: '#c74fffff', textShadow: '0 2px 10px rgba(0,0,0,0.8)' }}>
+             <div className="mic-active-text" style={{ fontSize: '1.4rem', color: 'var(--violet-light)', textShadow: '0 2px 10px rgba(0,0,0,0.8)' }}>
                  Tap each candle to blow it out! 
              </div>
            )}

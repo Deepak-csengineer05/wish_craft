@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import './Section9.css';
 import { trackEvent } from '../../analytics';
+import { useGift } from '../../context/GiftContext';
 
 const MOOD_CARDS = [
   { id: 1, front: "Sad", back: "I will be your shoulder" },
@@ -17,8 +18,22 @@ const MOOD_CARDS = [
 ];
 
 export default function Section9({ onNext }) {
+  const { configData } = useGift() || {};
   const [flippedCards, setFlippedCards] = useState({});
   const [isMobile, setIsMobile] = useState(false);
+
+  const cards = useMemo(() => {
+    if (configData?.moodCards && Object.keys(configData.moodCards).length > 0) {
+      return Object.keys(configData.moodCards)
+        .sort((a, b) => Number(a) - Number(b))
+        .map(key => ({
+          id: Number(key),
+          front: configData.moodCards[key].front,
+          back: configData.moodCards[key].back
+        }));
+    }
+    return MOOD_CARDS;
+  }, [configData]);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth <= 768);
@@ -29,7 +44,7 @@ export default function Section9({ onNext }) {
 
   const handleCardClick = (id) => {
     if (!flippedCards[id]) {
-      const cardLabel = MOOD_CARDS.find(c => c.id === id)?.front || id;
+      const cardLabel = cards.find(c => c.id === id)?.front || id;
       trackEvent('Section9', 'card_flip', { cardId: id, label: cardLabel });
     }
     setFlippedCards(prev => ({
@@ -39,7 +54,8 @@ export default function Section9({ onNext }) {
   };
 
   const flippedCount = Object.values(flippedCards).filter(Boolean).length;
-  const showNext = flippedCount >= 3;
+  // Fallback next condition: at least 3 cards flipped, or if fewer than 3 total cards exist, all of them flipped
+  const showNext = flippedCount >= Math.min(3, cards.length);
 
   const stars = useMemo(() => {
     return Array.from({ length: 150 }).map((_, i) => ({
@@ -85,7 +101,7 @@ export default function Section9({ onNext }) {
         {isMobile ? (
           <div className="s9-mobile-grid-area">
             <div className="s9-mobile-grid">
-              {MOOD_CARDS.map((card, index) => {
+              {cards.map((card, index) => {
                 const isFlipped = !!flippedCards[card.id];
                 return (
                   <div 
@@ -110,7 +126,7 @@ export default function Section9({ onNext }) {
           <div className="s9-marquee">
             <div className="s9-marquee-track">
               {/* Render 3 sets of cards to seamlessly loop forever */}
-              {[...MOOD_CARDS, ...MOOD_CARDS, ...MOOD_CARDS].map((card, index) => {
+              {[...cards, ...cards, ...cards].map((card, index) => {
                 const isFlipped = !!flippedCards[card.id];
                 return (
                   <div 

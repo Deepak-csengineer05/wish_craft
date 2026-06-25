@@ -1,12 +1,12 @@
 /* ──────────────────────────────────
-   Section 9 — Interactive Moon
-────────────────────────────────── */
+   Section 10 — Interactive Moon Q&A (Themed)
+   ────────────────────────────────── */
 
 .s10-root {
   width: 100vw;
   height: 100dvh;
   position: relative;
-  background: radial-gradient(circle at center, #18122a, #050308);
+  background: #000000;
   overflow: hidden;
   font-family: 'Inter', sans-serif;
   display: flex;
@@ -21,7 +21,7 @@
   filter: blur(120px);
   z-index: 0;
   animation: driftNebula 25s infinite alternate ease-in-out;
-  opacity: 0.6;
+  opacity: 0.2;
   pointer-events: none;
 }
 
@@ -30,7 +30,7 @@
   left: -20%;
   width: 60vw;
   height: 60vw;
-  background: radial-gradient(circle, #5b1cd4 0%, transparent 70%);
+  background: radial-gradient(circle, var(--violet, #5b1cd4) 0%, transparent 70%);
 }
 
 .s7-nebula-2 {
@@ -38,7 +38,7 @@
   right: -20%;
   width: 70vw;
   height: 70vw;
-  background: radial-gradient(circle, #ff2a7a 0%, transparent 70%);
+  background: radial-gradient(circle, hsl(calc(var(--theme-hue, 198) - 100), 70%, 25%) 0%, transparent 70%);
   animation-duration: 30s;
   animation-direction: alternate-reverse;
   opacity: 0.4;
@@ -49,7 +49,7 @@
   left: 20%;
   width: 50vw;
   height: 50vw;
-  background: radial-gradient(circle, #ffb432 0%, transparent 70%);
+  background: radial-gradient(circle, hsl(calc(var(--theme-hue, 198) + 60), 60%, 20%) 0%, transparent 70%);
   animation-duration: 35s;
   opacity: 0.3;
 }
@@ -59,7 +59,7 @@
   right: -10%;
   width: 55vw;
   height: 55vw;
-  background: radial-gradient(circle, #00d2ff 0%, transparent 70%);
+  background: radial-gradient(circle, hsl(var(--theme-hue, 198), 80%, 25%) 0%, transparent 70%);
   animation-duration: 28s;
   animation-direction: alternate-reverse;
   opacity: 0.35;
@@ -85,7 +85,7 @@
   position: absolute;
   background: white;
   border-radius: 50%;
-  box-shadow: 0 0 5px white, 0 0 10px rgba(163, 116, 255, 0.5);
+  box-shadow: 0 0 5px white, 0 0 10px hsla(var(--theme-hue, 198), 100%, 73%, 0.5);
   animation: twinkle infinite alternate ease-in-out;
 }
 
@@ -113,7 +113,6 @@
   pointer-events: none;
 }
 
-
 /* ─── Moon Visual ─────────────── */
 .s10-moon-wrapper {
   position: relative;
@@ -133,7 +132,7 @@
   height: 100%;
   position: relative;
   z-index: 2;
-  filter: drop-shadow(0 0 20px rgba(180, 140, 255, 0.5));
+  filter: drop-shadow(0 0 20px hsla(var(--theme-hue, 198), 80%, 75%, 0.5));
 }
 
 .s10-moon-glow {
@@ -141,7 +140,7 @@
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
   width: 140%; height: 140%;
-  background: radial-gradient(circle, rgba(160, 90, 255, 0.25) 0%, transparent 60%);
+  background: radial-gradient(circle, hsla(var(--theme-hue, 198), 80%, 65%, 0.25) 0%, transparent 60%);
   z-index: 1;
   border-radius: 50%;
   animation: s10PulseGlow 3s infinite alternate ease-in-out;
@@ -151,29 +150,27 @@
   to { transform: translate(-50%, -50%) scale(1.15); opacity: 0.7; }
 }
 
-
 /* ─── Dialogue Box ────────────── */
 .s10-dialogue-box {
-  background: rgba(20, 10, 40, 0.5);
+  background: hsla(var(--theme-hue, 198), 40%, 10%, 0.5);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(180, 120, 255, 0.4);
+  border: 1px solid hsla(var(--theme-hue, 198), 60%, 65%, 0.4);
   border-radius: 20px;
   padding: 24px 32px;
   width: 100%;
   text-align: center;
-  box-shadow: 0 16px 40px rgba(0,0,0,0.5), inset 0 0 20px rgba(120,60,200,0.2);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.5), inset 0 0 20px hsla(var(--theme-hue, 198), 55%, 51%, 0.2);
   margin-bottom: 24px;
 }
 
 .s10-text {
   font-family: 'Dancing Script', cursive;
   font-size: 1.8rem;
-  color: #f0e6ff;
+  color: var(--violet-light, #f0e6ff);
   line-height: 1.6;
   margin: 0;
   text-shadow: 0 2px 8px rgba(0,0,0,0.5);
 }
-
 
 /* ─── Interaction Area ────────── */
 .s10-interaction-area {
@@ -206,25 +203,25 @@
 }
 
 .s10-btn-option {
-  background: rgba(60, 20, 100, 0.4);
-  border: 1px solid rgba(160, 100, 220, 0.5);
+  background: hsla(var(--theme-hue, 198), 50%, 25%, 0.4);
+  border: 1px solid hsla(var(--theme-hue, 198), 50%, 60%, 0.5);
   color: #f4ebff;
   backdrop-filter: blur(12px);
-  border-radius: 30px; /* Fully pill-shaped */
+  border-radius: 30px;
   box-shadow: 0 4px 15px rgba(0,0,0,0.3);
 }
 
 .s10-btn-option:hover {
-  background: rgba(100, 30, 160, 0.6);
-  border-color: rgba(220, 160, 255, 0.8);
+  background: hsla(var(--theme-hue, 198), 50%, 35%, 0.6);
+  border-color: hsla(var(--theme-hue, 198), 100%, 81%, 0.8);
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(120, 40, 180, 0.5);
+  box-shadow: 0 8px 24px hsla(var(--theme-hue, 198), 50%, 45%, 0.4);
   color: #fff;
 }
 
-/* ── Cute Soft Cornered Yes / No Buttons ── */
+/* ── Cute Soft Yes / No Buttons ── */
 .s10-btn-yes, .s10-btn-no {
-  border-radius: 30px; /* Fully pill-shaped */
+  border-radius: 30px;
   font-weight: 600;
   letter-spacing: 0.5px;
   max-width: 280px;
@@ -260,9 +257,9 @@
 }
 
 .s10-btn-primary {
-  background: linear-gradient(135deg, #a030ef, #6610b0);
+  background: var(--grad-violet-glow);
   color: white;
-  box-shadow: 0 6px 20px rgba(120, 20, 200, 0.5);
+  box-shadow: 0 6px 20px hsla(var(--theme-hue, 198), 60%, 45%, 0.4);
   max-width: 280px;
   margin: 0 auto;
   border-radius: 30px;
@@ -270,8 +267,10 @@
 
 .s10-btn-primary:hover:not(:disabled) {
   transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 10px 28px rgba(140, 30, 230, 0.6);
-  background: linear-gradient(135deg, #b845ff, #7f19d2);
+  box-shadow: 0 10px 28px hsla(var(--theme-hue, 198), 65%, 55%, 0.5);
+  background: var(--grad-violet-text);
+  color: #000;
+  font-weight: 600;
 }
 
 .s10-btn-primary:disabled {
@@ -290,8 +289,8 @@
 .s10-textarea {
   width: 100%;
   height: 140px;
-  background: rgba(25, 10, 45, 0.6);
-  border: 1px solid rgba(160, 90, 240, 0.5);
+  background: hsla(var(--theme-hue, 198), 45%, 8%, 0.6);
+  border: 1px solid hsla(var(--theme-hue, 198), 50%, 60%, 0.5);
   border-radius: 20px;
   padding: 22px;
   color: #fff;
@@ -306,12 +305,12 @@
 }
 
 .s10-textarea:focus {
-  border-color: #e2a8ff;
-  background: rgba(40, 15, 75, 0.8);
-  box-shadow: inset 0 4px 16px rgba(0,0,0,0.5), 0 0 24px rgba(180, 100, 255, 0.3);
+  border-color: var(--violet-light, #e2a8ff);
+  background: hsla(var(--theme-hue, 198), 45%, 15%, 0.8);
+  box-shadow: inset 0 4px 16px rgba(0,0,0,0.5), 0 0 24px hsla(var(--theme-hue, 198), 70%, 55%, 0.3);
 }
 
 .s10-textarea::placeholder {
-  color: rgba(200, 180, 255, 0.45);
+  color: hsla(var(--theme-hue, 198), 50%, 75%, 0.45);
   font-style: italic;
 }

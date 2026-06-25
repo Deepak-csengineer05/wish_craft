@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import './Section7.css';
+import { useGift } from '../../context/GiftContext';
 
 export default function ScratchCard({ 
   id, 
@@ -8,11 +9,18 @@ export default function ScratchCard({
   onTransformComplete,
   onReturn
 }) {
+  const { config, configData } = useGift() || {};
+  const themeHue = config?.theme_hue ?? 198;
   const canvasRef = useRef(null);
   const cardRef = useRef(null);
   const [isScratched, setIsScratched] = useState(isInitiallyTransformed);
   const [isSweeping, setIsSweeping] = useState(false);
   const [isGhibli, setIsGhibli] = useState(isInitiallyTransformed);
+
+  const customOrigUrl = configData?.scratchUrls?.[id];
+  const customGhibliUrl = configData?.scratchGhibliUrls?.[id];
+  const normalSrc = customOrigUrl || `/sec7pic${id}.${[4, 5, 7].includes(id) ? 'png' : 'jpeg'}`;
+  const ghibliSrc = customGhibliUrl || customOrigUrl || `/sec7pic${id}Ghibli.${id === 6 ? 'png' : 'jpeg'}`;
 
   // Initialize canvas only if we haven't transformed yet
   useEffect(() => {
@@ -22,13 +30,13 @@ export default function ScratchCard({
     if (!canvas) return;
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
     
-    // Fill with pristine stardust texture
-    ctx.fillStyle = '#1e1b30';
+    // Fill with pristine stardust texture (matching the dark theme colors)
+    ctx.fillStyle = `hsl(${themeHue}, 30%, 15%)`;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
     // Add tiny stars to the scratch layer
     for(let i=0; i<120; i++) {
-        ctx.fillStyle = Math.random() > 0.5 ? '#b39ddb' : '#ffffff';
+        ctx.fillStyle = Math.random() > 0.5 ? `hsl(${themeHue}, 50%, 75%)` : '#ffffff';
         const x = Math.random() * canvas.width;
         const y = Math.random() * canvas.height;
         const size = Math.random() * 1.5;
@@ -43,7 +51,7 @@ export default function ScratchCard({
     ctx.textAlign = 'center';
     ctx.fillText('Scratch to reveal memory...', canvas.width / 2, canvas.height / 2);
 
-  }, [isInitiallyTransformed]);
+  }, [isInitiallyTransformed, themeHue]);
 
   // Particle Emitter Logic
   const emitGlitter = (clientX, clientY) => {
@@ -64,7 +72,7 @@ export default function ScratchCard({
     particle.style.top = `${y}px`;
     
     // Randomize colors for magic
-    const colors = ['#fff', '#ffb432', '#d4a8ff'];
+    const colors = ['#fff', '#ffb432', `hsl(${themeHue}, 50%, 75%)`];
     particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
     
     // Randomize animation variables
@@ -171,17 +179,17 @@ export default function ScratchCard({
       */}
       <div className="card-images">
         <img 
-          src={`/sec7pic${id}.${[4, 5, 7].includes(id) ? 'png' : 'jpeg'}`} 
+          src={normalSrc} 
           alt={`Memory ${id}`} 
           className="photo-layer normal-photo" 
         />
         <img 
-          src={`/sec7pic${id}Ghibli.${id === 6 ? 'png' : 'jpeg'}`} 
+          src={ghibliSrc} 
           alt={`Magic ${id}`} 
           className="photo-layer ghibli-photo" 
           onError={(e) => {
             e.target.onerror = null; 
-            e.target.src = `/sec7pic${id}.${[4, 5, 7].includes(id) ? 'png' : 'jpeg'}`;
+            e.target.src = normalSrc;
           }}
         />
       </div>

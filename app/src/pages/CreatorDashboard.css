@@ -1,0 +1,276 @@
+/* ═══════════════════════════════════════════════════════
+   🌙 CREATOR DASHBOARD CSS
+   ═══════════════════════════════════════════════════════ */
+
+.db-root {
+  min-height: 100dvh;
+  background: radial-gradient(circle at center, #061f22, #010609);
+  color: #e0f2fe;
+  font-family: 'Inter', sans-serif;
+  padding: 40px 20px;
+}
+
+.db-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Header */
+.db-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+  background: rgba(6, 31, 34, 0.25);
+  border: 1px solid hsla(var(--theme-hue, 198), 50%, 55%, 0.15);
+  border-radius: 20px;
+  padding: 20px 30px;
+  backdrop-filter: blur(10px);
+}
+
+.db-user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.db-user-email {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.db-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #ffffff, var(--violet-light, var(--violet-light, #e0f2fe)));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.db-actions {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+/* Grid & Cards */
+.db-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 30px;
+  margin-bottom: 50px;
+}
+
+.db-card {
+  background: rgba(6, 31, 34, 0.35);
+  border: 1px solid hsla(var(--theme-hue, 198), 50%, 55%, 0.15);
+  border-radius: 20px;
+  padding: 25px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.db-card:hover {
+  transform: translateY(-5px);
+  border-color: hsla(var(--theme-hue, 198), 50%, 55%, 0.4);
+  box-shadow: 0 15px 30px hsla(var(--theme-hue, 198), 50%, 55%, 0.15);
+}
+
+.db-card-glow {
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle, var(--glow-color, hsla(var(--theme-hue, 198), 50%, 55%, 0.2)) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.db-card-header {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.db-recipient-name {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: white;
+}
+
+.db-birthday-label {
+  font-size: 0.85rem;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.db-card-stats {
+  display: flex;
+  gap: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 15px 0;
+  margin-bottom: 20px;
+}
+
+.db-stat-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.db-stat-val {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: white;
+}
+
+.db-stat-lbl {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Copy Link Area */
+.db-link-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.db-link-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+}
+
+.db-link-text {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.db-copy-btn {
+  background: none;
+  border: none;
+  color: var(--violet-light, var(--violet-light, #e0f2fe));
+  cursor: pointer;
+  font-weight: 500;
+  padding: 4px;
+  transition: color 0.2s ease;
+}
+
+.db-copy-btn:hover {
+  color: white;
+}
+
+/* Card Actions */
+.db-card-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.db-btn-view {
+  flex: 1.5;
+  background: linear-gradient(135deg, var(--violet-soft, var(--violet-soft, #14b8a6)), var(--violet-mid, var(--violet-mid, #0284c7)));
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.db-btn-view:hover {
+  box-shadow: 0 4px 15px hsla(var(--theme-hue, 198), 50%, 55%, 0.35);
+}
+
+.db-btn-your {
+  flex: 1.5;
+  background: rgba(212, 168, 83, 0.15);
+  border: 1px solid rgba(212, 168, 83, 0.3);
+  color: #f0c878;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.db-btn-your:hover {
+  background: rgba(212, 168, 83, 0.25);
+}
+
+.db-btn-icon {
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.db-btn-icon:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.db-btn-icon.delete:hover {
+  background: rgba(255, 85, 85, 0.15);
+  border-color: rgba(255, 85, 85, 0.4);
+  color: #ff5555;
+}
+
+/* Empty State */
+.db-empty {
+  text-align: center;
+  padding: 80px 20px;
+  background: rgba(6, 31, 34, 0.25);
+  border: 2px dashed hsla(var(--theme-hue, 198), 50%, 55%, 0.2);
+  border-radius: 24px;
+}
+
+.db-empty-icon {
+  font-size: 3.5rem;
+  margin-bottom: 20px;
+}
+
+.db-empty-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.db-empty-desc {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.5);
+  max-width: 400px;
+  margin: 0 auto 25px auto;
+  line-height: 1.5;
+}

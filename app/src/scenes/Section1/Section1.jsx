@@ -1,9 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './Section1.css';
+import { useGift } from '../../context/GiftContext';
 
 export default function Section1({ onNext, onVideoStart }) {
+  const { configData } = useGift();
   const [showNextButton, setShowNextButton] = useState(false);
   const videoRef = useRef(null);
+
+  const videoSrc = configData?.video2Url || "/section1.mp4";
+  const endImageSrc = configData?.profileUrl || "/section1-end.png";
 
   useEffect(() => {
     if (videoRef.current) {
@@ -27,7 +32,7 @@ export default function Section1({ onNext, onVideoStart }) {
     <div className="section1-wrapper">
       <video 
         ref={videoRef}
-        src="/section1.mp4" 
+        src={videoSrc} 
         className="s1-video"
         onEnded={handleVideoEnded}
         preload="auto"
@@ -38,7 +43,7 @@ export default function Section1({ onNext, onVideoStart }) {
       <div className={`s1-image-overlay ${showNextButton ? 'active' : ''}`}>
         {showNextButton && (
           <div className="s1-image-container">
-            <img src="/section1-end.png" alt="End scene" className="s1-end-image" />
+            <img src={endImageSrc} alt="End scene" className="s1-end-image" onError={(e) => { e.target.onerror = null; e.target.src = "/section1-end.png"; }} />
             <div className="s1-invisible-trigger" onClick={onNext} title="Click Here to proceed"></div>
           </div>
         )}

@@ -6,10 +6,10 @@
 .hub-root {
   width: 100vw;
   height: 100dvh;
-  background: #020105;
+  background: var(--deep-black, #010609);
   background-image: 
-    radial-gradient(circle at 50% -20%, #2b1145 0%, #05020a 50%, #000000 100%),
-    linear-gradient(0deg, #020105 0%, transparent 100%);
+    radial-gradient(circle at 50% -20%, hsl(var(--theme-hue, 198), 45%, 15%) 0%, var(--deep-black, #010609) 65%, #000000 100%),
+    linear-gradient(0deg, var(--deep-black, #010609) 0%, transparent 100%);
   position: relative;
   overflow-y: auto;
   overflow-x: hidden;
@@ -55,13 +55,13 @@
   font-family: 'GreatVibes', cursive;
   font-size: 5rem;
   font-weight: normal;
-  background: linear-gradient(to right, #ffd8a0, #ffb2d9, #b088f9);
+  background: linear-gradient(to right, #ffd8a0, hsl(var(--theme-hue, 198), 85%, 80%), hsl(var(--theme-hue, 198), 70%, 75%));
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   margin: 0;
   padding-bottom: 0.5rem;
-  filter: drop-shadow(0 4px 15px rgba(255, 178, 217, 0.3));
+  filter: drop-shadow(0 4px 15px hsla(var(--theme-hue, 198), 75%, 70%, 0.35));
 }
 
 .hub-header p {
@@ -236,12 +236,12 @@
 
 /* Elegant Scrollbar */
 .hub-root::-webkit-scrollbar { width: 8px; }
-.hub-root::-webkit-scrollbar-track { background: #05020a; }
+.hub-root::-webkit-scrollbar-track { background: var(--deep-black, #010609); }
 .hub-root::-webkit-scrollbar-thumb {
-  background: rgba(176, 136, 249, 0.3);
+  background: hsla(var(--theme-hue, 198), 70%, 75%, 0.3);
   border-radius: 10px;
 }
-.hub-root::-webkit-scrollbar-thumb:hover { background: rgba(176, 136, 249, 0.6); }
+.hub-root::-webkit-scrollbar-thumb:hover { background: hsla(var(--theme-hue, 198), 70%, 75%, 0.6); }
 
 /* Special Mention Card (Inline in Grid) */
 .hub-special-mention-card {
@@ -269,7 +269,7 @@
   font-family: 'GreatVibes', cursive;
   font-size: 2.5rem;
   padding: 0.5rem 0; /* Prevents cursive ascenders from cutting off due to background-clip */
-  background: linear-gradient(to right, #ffd8a0, #ffb2d9);
+  background: linear-gradient(to right, #ffd8a0, hsl(var(--theme-hue, 198), 85%, 80%));
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -281,11 +281,11 @@
   font-weight: 600;
   letter-spacing: 2px;
   margin-top: 1.5rem;
-  background: linear-gradient(135deg, #e8e0f5, #b39ddb, #b088f9);
+  background: linear-gradient(135deg, #e8e0f5, var(--violet-light, hsl(var(--theme-hue, 198), 70%, 75%)), hsl(var(--theme-hue, 198), 65%, 65%));
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 2px 5px rgba(176, 136, 249, 0.2));
+  filter: drop-shadow(0 2px 5px hsla(var(--theme-hue, 198), 70%, 75%, 0.25));
   position: relative;
   display: inline-block;
   padding-top: 1.25rem;
@@ -300,5 +300,5 @@
   transform: translateX(-50%);
   width: 50px;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(176, 136, 249, 0.8), transparent);
+  background: linear-gradient(90deg, transparent, hsla(var(--theme-hue, 198), 70%, 75%, 0.8), transparent);
 }

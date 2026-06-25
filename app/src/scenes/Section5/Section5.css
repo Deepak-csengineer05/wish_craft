@@ -1,7 +1,7 @@
 .section5-container {
     width: 100vw;
     height: 100dvh;
-    background: radial-gradient(circle at center, #1a0f2e 0%, #0a0512 100%);
+    background: radial-gradient(circle at center, hsl(var(--theme-hue, 198), 50%, 12%) 0%, hsl(var(--theme-hue, 198), 50%, 5%) 100%);
     position: relative;
     overflow: hidden;
     font-family: 'DM Sans', 'Inter', sans-serif;
@@ -23,7 +23,7 @@
 }
 
 .mic-btn {
-    background: linear-gradient(135deg, #7b52c8, #4a2c9e);
+    background: var(--grad-violet-glow);
     color: white;
     border: none;
     padding: 12px 30px;
@@ -31,13 +31,13 @@
     font-size: 1.2rem;
     font-weight: 500;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(123, 82, 200, 0.4);
+    box-shadow: 0 4px 15px var(--violet-glow);
     transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .mic-btn:hover {
     transform: scale(1.05);
-    box-shadow: 0 6px 20px rgba(123, 82, 200, 0.6);
+    box-shadow: 0 6px 20px var(--violet-glow);
 }
 
 .mic-active-text {
@@ -79,7 +79,7 @@
 .icing-text {
     font-family: var(--font-script, 'Dancing Script', cursive);
     font-size: 4.5rem;
-    color: #bfa1f7; /* Soft violet color */
+    color: var(--violet-light); /* Soft theme color */
     text-shadow: 2px 2px 6px rgba(0,0,0,0.8), -1px -1px 2px rgba(255,255,255,0.2);
     margin: 0;
     line-height: 1.3;

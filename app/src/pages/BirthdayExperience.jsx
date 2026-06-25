@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useGift } from '../context/GiftContext';
 import './BirthdayExperience.css';
 
 import Scene1Twin from '../scenes/Scene1Twin/Scene1Twin';
@@ -10,15 +11,28 @@ import MainSections from '../scenes/MainSections/MainSections';
 import GalleryHub from './GalleryHub';
 
 export default function BirthdayExperience({ isRevisit = false }) {
-  // If the user is revisiting the site (already unlocked in previous session), jump to hub
-  // If it's a fresh unlock session, start at scene 0
-  const [sceneIndex, setSceneIndex] = useState(isRevisit ? 'hub' : 0); 
-  const [isHubMode, setIsHubMode] = useState(isRevisit);
+  const { configData, isSectionActive } = useGift();
+
+  const getIntroScenes = () => {
+    const list = [];
+    if (isSectionActive('scene1')) list.push(0);
+    if (isSectionActive('scene2')) list.push(1);
+    if (isSectionActive('scene3')) list.push(2);
+    if (isSectionActive('section1')) list.push(3);
+    if (isSectionActive('scene4')) list.push(4);
+    list.push('hub');
+    return list;
+  };
+
+  const introScenes = getIntroScenes();
+  const initialScene = isRevisit ? 'hub' : (introScenes[0] !== undefined ? introScenes[0] : 'hub');
+
+  const [sceneIndex, setSceneIndex] = useState(initialScene); 
+  const [isHubMode, setIsHubMode] = useState(isRevisit || initialScene === 'hub');
   const [mainSectionToLoad, setMainSectionToLoad] = useState(1);
   const audioRef = useRef(null);
   const audio2Ref = useRef(null);
   
-  // Refs to force preload heavy videos
   const preloadVid1 = useRef(null);
   const preloadVid2 = useRef(null);
 
@@ -26,15 +40,18 @@ export default function BirthdayExperience({ isRevisit = false }) {
     if (isHubMode) {
       setSceneIndex('hub');
     } else {
-      setSceneIndex((currentIdx) => {
-        // Linear path finishes after scene 4, we enter scene 5 (MainSections) naturally
-        // But if we are exiting MainSections (currentIdx === 5), the entire linear journey is over!
-        if (currentIdx === 5) {
+      const activeScenesList = getIntroScenes();
+      const currentPos = activeScenesList.indexOf(sceneIndex);
+      if (currentPos !== -1 && currentPos < activeScenesList.length - 1) {
+        const nextScene = activeScenesList[currentPos + 1];
+        if (nextScene === 'hub') {
           setIsHubMode(true);
-          return 'hub';
         }
-        return typeof currentIdx === 'number' ? currentIdx + 1 : 'hub';
-      });
+        setSceneIndex(nextScene);
+      } else {
+        setIsHubMode(true);
+        setSceneIndex('hub');
+      }
     }
   };
 
@@ -74,18 +91,23 @@ export default function BirthdayExperience({ isRevisit = false }) {
     if (preloadVid1.current) preloadVid1.current.load();
     if (preloadVid2.current) preloadVid2.current.load();
 
-    // Preload important images quietly in the background
+    // Preload important images dynamically with user configuration fallback support
     const imagesToPreload = [
-      '/pic1.jpeg', '/pic2.jpeg', '/pic3.jpeg', '/pic4.jpeg',
-      '/pic5.jpeg', '/pic6.jpeg', '/pic7.jpeg', '/pic8.jpeg',
-      '/profile.jpeg', '/section3-flower-ref.png', '/section3-balloon-ref.png'
+      configData?.profileUrl || '/profile.jpeg',
+      configData?.polaroidUrls?.[1] || '/pic1.jpeg',
+      configData?.polaroidUrls?.[2] || '/pic2.jpeg',
+      configData?.polaroidUrls?.[3] || '/pic3.jpeg',
+      configData?.polaroidUrls?.[4] || '/pic4.jpeg',
+      '/section3-flower-ref.png', 
+      '/section3-balloon-ref.png'
     ];
     imagesToPreload.forEach(src => {
-      const img = new Image();
-      img.src = src;
+      if (src) {
+        const img = new Image();
+        img.src = src;
+      }
     });
 
-    // Preload other audio files using resource hints
     const audiosToPreload = ['/bg-music-3.mp3', '/firework.mp3', '/crack.mp3'];
     audiosToPreload.forEach(src => {
       const link = document.createElement('link');
@@ -94,7 +116,7 @@ export default function BirthdayExperience({ isRevisit = false }) {
       link.as = 'audio';
       document.head.appendChild(link);
     });
-  }, []);
+  }, [configData]);
 
   useEffect(() => {
     if (!audioRef.current) return;
@@ -109,26 +131,30 @@ export default function BirthdayExperience({ isRevisit = false }) {
           audio.pause();
           clearInterval(fadeInterval);
         }
-      }, 150); // fades out slowly over ~3 seconds
+      }, 150);
 
       return () => clearInterval(fadeInterval);
     }
   }, [sceneIndex]);
 
-  // Stop bg-music-2 whenever the user leaves Section1 and goes back to hub
   useEffect(() => {
     if (sceneIndex === 'hub') {
       stopBgMusic2();
     }
   }, [sceneIndex]);
 
+  // Load custom media assets
+  const video1 = configData?.video1Url || '/video.mp4';
+  const video2 = configData?.video2Url || '/section1.mp4';
+  const bgMusicMain = configData?.bgMusicUrl || '/bg-music.mp3';
+
   return (
     <div className="experience-wrapper">
       {/* ── Preload Heavy Video Assets early ── */}
-      <video ref={preloadVid1} style={{ display: 'none' }} preload="auto" playsInline src="/video.mp4" />
-      <video ref={preloadVid2} style={{ display: 'none' }} preload="auto" playsInline src="/section1.mp4" />
+      <video ref={preloadVid1} style={{ display: 'none' }} preload="auto" playsInline src={video1} />
+      <video ref={preloadVid2} style={{ display: 'none' }} preload="auto" playsInline src={video2} />
 
-      <audio ref={audioRef} src="/bg-music.mp3" loop />
+      <audio ref={audioRef} src={bgMusicMain} loop />
       <audio ref={audio2Ref} src="/bg-music-2.mp3" loop />
 
       {sceneIndex === 0 && <Scene1Twin onProceed={next} onAudioStart={startAudio} />}
@@ -159,7 +185,7 @@ export default function BirthdayExperience({ isRevisit = false }) {
         />
       )}
 
-      {/* Floating Back to Hub Button (Only visible in Hub Mode when visiting a memory constraint) */}
+      {/* Floating Back to Hub Button */}
       {isHubMode && sceneIndex !== 'hub' && (
         <button 
           className="back-to-hub-btn"

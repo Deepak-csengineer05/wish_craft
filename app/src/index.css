@@ -1,26 +1,27 @@
 /* ================================
-   🌙 LUNAR GIFT — Global CSS Tokens
+   ✨ WISH CRAFT — Global CSS Tokens
    Violet + Dark Theme
    ================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Inter:wght@300;400;500;600&family=Dancing+Script:wght@600;700&family=Roboto:wght@400;700&display=swap');
 
 :root {
-  /* === Violet Theme Palette === */
+  /* === Teal/Blue Theme Palette === */
+  --theme-hue:       198;
   --black:           #000000;
-  --deep-black:      #04020d;
-  --deep-violet:     #0d0520;
-  --violet-dark:     #1a0a38;
-  --violet:          #2d1b69;
-  --violet-mid:      #4a2c9e;
-  --violet-soft:     #7b52c8;
-  --violet-light:    #b39ddb;
-  --violet-glow:     rgba(123, 82, 200, 0.35);
+  --deep-black:      var(--deep-black, var(--deep-black, hsl(198, 70%, 5%)));
+  --deep-violet:     var(--deep-violet, var(--deep-violet, hsl(198, 70%, 9%)));
+  --violet-dark:     var(--violet-dark, var(--violet-dark, hsl(198, 70%, 15%)));
+  --violet:          var(--violet, var(--violet, hsl(198, 60%, 26%)));
+  --violet-mid:      var(--violet-mid, var(--violet-mid, hsl(198, 56%, 40%)));
+  --violet-soft:     var(--violet-soft, var(--violet-soft, hsl(198, 50%, 55%)));
+  --violet-light:    var(--violet-light, var(--violet-light, hsl(198, 50%, 75%)));
+  --violet-glow:     hsla(var(--theme-hue, 198), 50%, 55%, 0.35);
 
   /* Gradient helpers */
-  --grad-violet:      linear-gradient(135deg, #1a0a38 0%, #2d1b69 50%, #4a2c9e 100%);
-  --grad-violet-glow: linear-gradient(135deg, #2d1b69 0%, #7b52c8 100%);
-  --grad-violet-text: linear-gradient(135deg, #b39ddb, #7b52c8, #d4a8ff);
+  --grad-violet:      linear-gradient(135deg, var(--violet-dark, var(--violet-dark, hsl(198, 70%, 15%))) 0%, var(--violet, var(--violet, hsl(198, 60%, 26%))) 50%, var(--violet-mid, var(--violet-mid, hsl(198, 56%, 40%))) 100%);
+  --grad-violet-glow: linear-gradient(135deg, var(--violet, var(--violet, hsl(198, 60%, 26%))) 0%, var(--violet-soft, var(--violet-soft, hsl(198, 50%, 55%))) 100%);
+  --grad-violet-text: linear-gradient(135deg, var(--violet-light, var(--violet-light, hsl(198, 50%, 75%))), var(--violet-soft, var(--violet-soft, hsl(198, 50%, 55%))), #a8f0ff);
 
   /* Accent */
   --gold:            #d4a853;
@@ -54,7 +55,7 @@
   --space-xl:  8rem;
 
   /* === Borders === */
-  --border-violet:  2px solid rgba(123, 82, 200, 0.5);
+  --border-violet:  2px solid hsla(var(--theme-hue, 198), 50%, 55%, 0.5);
   --border-gold:    2px solid rgba(212, 168, 83, 0.5);
 
   /* === Easing === */

@@ -2,6 +2,7 @@ import React, { useRef, useMemo, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useSpring, a } from '@react-spring/three';
 import { Text } from '@react-three/drei';
+import { useGift } from '../../context/GiftContext';
 
 export default function Cake3D({ blownCandles, onBlowCandle, showText }) {
   // Cherries around the top edge (doubled to 16)
@@ -188,6 +189,21 @@ function Candle({ position, isBlown, onClick }) {
 }
 
 function IcingText({ showText }) {
+    const { recipientName, configData, birthday, config } = useGift();
+    const themeHue = config?.theme_hue ?? 198;
+    const targetAge = useMemo(() => {
+        if (configData?.targetAge) return configData.targetAge;
+        if (birthday) {
+            const parts = birthday.split('-');
+            if (parts.length === 3) {
+                const birthYear = parseInt(parts[2], 10);
+                if (birthYear) {
+                    return String(new Date().getFullYear() - birthYear);
+                }
+            }
+        }
+        return '20';
+    }, [birthday, configData]);
     const { opacity } = useSpring({
         opacity: showText ? 1 : 0,
         config: { duration: 1500 }
@@ -203,10 +219,10 @@ function IcingText({ showText }) {
                 textAlign="center"
                 lineHeight={1.3}
                 outlineWidth={0.015}
-                outlineColor="#240a4a"
+                outlineColor={`hsl(${themeHue}, 80%, 15%)`}
             >
-                Happy{'\n'}20th Birthday{'\n'}Poojetha
-                <a.meshStandardMaterial transparent opacity={opacity} color="#47158f" roughness={0.4} />
+                Happy{'\n'}{targetAge}th Birthday{'\n'}{recipientName}
+                <a.meshStandardMaterial transparent opacity={opacity} color={`hsl(${themeHue}, 75%, 32%)`} roughness={0.4} />
             </Text>
         </group>
     );

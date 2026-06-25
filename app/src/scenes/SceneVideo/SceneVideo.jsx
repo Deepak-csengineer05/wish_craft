@@ -1,7 +1,9 @@
 import React, { useRef, useEffect } from 'react';
+import { useGift } from '../../context/GiftContext';
 import './SceneVideo.css';
 
 export default function SceneVideo({ onProceed }) {
+  const { configData } = useGift();
   const videoRef = useRef(null);
 
   useEffect(() => {
@@ -19,11 +21,13 @@ export default function SceneVideo({ onProceed }) {
     return null;
   }
 
+  const videoSrc = configData?.video1Url || "/video.mp4";
+
   return (
     <div className="scene-video-wrapper">
       <video 
         ref={videoRef}
-        src="/video.mp4" 
+        src={videoSrc} 
         className="full-screen-video"
         onEnded={onProceed}
         preload="auto"

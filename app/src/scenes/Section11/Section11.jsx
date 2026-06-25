@@ -1,10 +1,12 @@
 import React, { useState, useRef } from 'react';
 import LetterScene from './LetterScene';
 import LetterScroll from './LetterScroll';
-import './Section11.css';
+import { useGift } from '../../context/GiftContext';
 import { trackEvent } from '../../analytics';
+import './Section11.css';
 
 export default function Section11({ onNext }) {
+  const { giftId } = useGift();
   const [phase, setPhase] = useState('table'); // table -> reading -> exiting
   const [currentTrack, setCurrentTrack] = useState('/bg-music-5.mp3');
 
@@ -23,7 +25,7 @@ export default function Section11({ onNext }) {
     setPhase('exiting');
     if (readStartRef.current) {
       const readTime = Math.floor((Date.now() - readStartRef.current) / 1000);
-      trackEvent('Section11', 'letter_read_time', { seconds: readTime });
+      trackEvent(giftId, 'Section11', 'letter_read_time', { seconds: readTime });
     }
     setTimeout(() => {
       onNext();

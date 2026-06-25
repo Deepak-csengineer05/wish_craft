@@ -49,7 +49,7 @@ export default function DiaryBook({ quotes, onComplete }) {
               <div className="db-intro-text">
                 <p className="db-intro-title">A diary written</p>
                 <p className="db-intro-title">just for you,</p>
-                <p className="db-intro-sub">Lunar.</p>
+                <p className="db-intro-sub">Memories.</p>
                 <div className="db-divider">— ✦ —</div>
                 <p className="db-intro-note">Turn each page to discover<br />words written from the heart.</p>
               </div>
@@ -104,7 +104,7 @@ export default function DiaryBook({ quotes, onComplete }) {
       <Page side="right" key="r-end">
         <div className="db-page-content db-right-content">
           <div className="db-ornament" style={{ fontSize: '4rem', color: '#ccaa44' }}>✧</div>
-          <p style={{ fontFamily: "'Dancing Script', cursive", fontSize: '2rem', color: '#5a0096', marginTop: '16px' }}>
+          <p style={{ fontFamily: "'Dancing Script', cursive", fontSize: '2rem', color: 'var(--violet-mid)', marginTop: '16px' }}>
             End of Diary
           </p>
         </div>
@@ -158,7 +158,7 @@ export default function DiaryBook({ quotes, onComplete }) {
     return (
       <div className="db-overlay" style={{ flexDirection: 'column', backgroundColor: '#0d0704' }}>
         <h2 style={{ color: '#d4af37', fontFamily: "'Dancing Script', cursive", fontSize: '2.5rem', marginBottom: '20px' }}>
-          A Diary for Lunar
+          A Diary for You
         </h2>
         
         <div className="db-book-container" style={{ position: 'relative', width: '85%', height: '60%', padding: '10px' }}>
@@ -185,7 +185,7 @@ export default function DiaryBook({ quotes, onComplete }) {
                 ) : (
                   <>
                     <div className="db-ornament" style={{ fontSize: '4rem', color: '#ccaa44' }}>✧</div>
-                    <p style={{ fontFamily: "'Dancing Script', cursive", fontSize: '2rem', color: '#5a0096', marginTop: '16px' }}>
+                    <p style={{ fontFamily: "'Dancing Script', cursive", fontSize: '2rem', color: 'var(--violet-mid)', marginTop: '16px' }}>
                       End of Diary
                     </p>
                   </>
@@ -210,7 +210,7 @@ export default function DiaryBook({ quotes, onComplete }) {
               if (currentPairIndex >= quotes.length) onComplete();
               else setCurrentPage(currentPage + 2);
             }}
-            style={{ padding: '10px 20px', fontSize: '1.2rem', background: '#d4af37', color: '#fff', border: 'none', borderRadius: '8px' }}
+            style={{ padding: '10px 20px', fontSize: '1.2rem', border: 'none', borderRadius: '8px' }}
           >
             {isEnd ? '📖 Close' : 'Next →'}
           </button>

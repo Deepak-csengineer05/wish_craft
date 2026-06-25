@@ -4,6 +4,7 @@ import { Text, Environment, ContactShadows, OrbitControls, CubicBezierLine } fro
 import { useSpring, a } from '@react-spring/three';
 import * as THREE from 'three';
 import Cake3D from '../Section5/Cake3D';
+import { useGift } from '../../context/GiftContext';
 
 /* ── Reused Environment Helpers ── */
 function Book({ position, rotation = [0, 0, 0], color, w = 0.22, h = 1.4, d = 1.9 }) {
@@ -212,7 +213,7 @@ function ScatteredPapers() {
 }
 
 /* ── Realistic Hanging Polaroids ── */
-function HangingPolaroid({ position, rotation, url, caption, stringCurve, onClick }) {
+function HangingPolaroid({ position, rotation, url, caption, stringCurve, themeHue = 198, onClick }) {
   const texture = useLoader(THREE.TextureLoader, url);
   return (
     <group 
@@ -227,7 +228,7 @@ function HangingPolaroid({ position, rotation, url, caption, stringCurve, onClic
         end={[0, 1.15, 0.02]} 
         midA={[stringCurve, 8.0, 0.02]} 
         midB={[-stringCurve, 3.5, 0.02]} 
-        color="#a090dd"
+        color={`hsl(${themeHue}, 50%, 75%)`}
         lineWidth={1.5}
         transparent
         opacity={0.5}
@@ -251,7 +252,7 @@ function HangingPolaroid({ position, rotation, url, caption, stringCurve, onClic
           font="/GreatVibes-Regular.ttf"
           position={[0, -0.9, 0.04]}
           fontSize={0.24}
-          color="#38186b"
+          color={`hsl(${themeHue}, 60%, 25%)`}
           anchorX="center"
           anchorY="middle"
         >
@@ -261,7 +262,7 @@ function HangingPolaroid({ position, rotation, url, caption, stringCurve, onClic
         {/* Shiny Pearl Pushpin */}
         <mesh position={[0, 1.0, 0.05]}>
           <sphereGeometry args={[0.06, 16, 16]} />
-          <meshStandardMaterial color="#e0d0ff" roughness={0.2} metalness={0.7} />
+          <meshStandardMaterial color={`hsl(${themeHue}, 100%, 90%)`} roughness={0.2} metalness={0.7} />
         </mesh>
       </group>
     </group>
@@ -269,7 +270,7 @@ function HangingPolaroid({ position, rotation, url, caption, stringCurve, onClic
 }
 
 /* ── The Static Elegant Envelope ── */
-function Envelope({ onOpen }) {
+function Envelope({ onOpen, themeHue = 198 }) {
   const [hovered, setHovered] = useState(false);
   const glowRef = useRef();
 
@@ -319,7 +320,7 @@ function Envelope({ onOpen }) {
         font="/GreatVibes-Regular.ttf"
         position={[0, -0.25, 0.05]}
         fontSize={0.34}
-        color="#8a2be2" // Deep violet
+        color={`hsl(${themeHue}, 70%, 40%)`}
         anchorX="center"
         anchorY="middle"
       >
@@ -327,7 +328,7 @@ function Envelope({ onOpen }) {
       </Text>
 
       {/* Interactive Glow */}
-      <pointLight ref={glowRef} color="#d4a8ff" intensity={hovered ? 0.9 : 0.5} distance={3} position={[0, 0, 0.4]} />
+      <pointLight ref={glowRef} color={`hsl(${themeHue}, 70%, 75%)`} intensity={hovered ? 0.9 : 0.5} distance={3} position={[0, 0, 0.4]} />
     </group>
   );
 }
@@ -377,6 +378,8 @@ function CameraController({ focusData }) {
 }
 
 export default function LetterScene({ onOpen, active, isFoldingBack }) {
+  const { configData } = useGift();
+  const themeHue = configData?.themeHue ?? 198;
   const [focusData, setFocusData] = useState(null);
   const [cakeClicks, setCakeClicks] = useState(0);
 
@@ -435,7 +438,7 @@ export default function LetterScene({ onOpen, active, isFoldingBack }) {
           shadow-camera-top={10} shadow-camera-bottom={-6}
         />
         <pointLight position={[5, 10, 3]} color="#ffcd70" intensity={9} distance={20} decay={2} castShadow />
-        <pointLight position={[-6, 7, 1]} color="#442288" intensity={5} distance={16} decay={2} />
+        <pointLight position={[-6, 7, 1]} color={`hsl(${themeHue}, 60%, 30%)`} intensity={5} distance={16} decay={2} />
         
         {/* Dedicated spotlight for the polaroid wall to ensure the wall is bright */}
         <pointLight position={[0, 4, -2]} color="#ffffff" intensity={7} distance={15} decay={2} />
@@ -460,13 +463,27 @@ export default function LetterScene({ onOpen, active, isFoldingBack }) {
 
         {/* ── Magnificent Hanging Memory Array ── */}
         <Suspense fallback={null}>
-          <HangingPolaroid position={[-6.8, 3.8, -5.8]} rotation={[0, 0, 0.06]} stringCurve={-0.8} url="/pic1.jpeg" caption="sweet memories" onClick={(e) => handlePolaroidClick(e, [-6.8, 3.8, -5.8])} />
-          <HangingPolaroid position={[-4.5, 2.6, -5.8]} rotation={[0, 0, -0.05]} stringCurve={1.0} url="/sec7pic4.png" caption="💜" onClick={(e) => handlePolaroidClick(e, [-4.5, 2.6, -5.8])} />
-          <HangingPolaroid position={[-2.4, 4.0, -5.8]} rotation={[0, 0, 0.08]} stringCurve={-1.2} url="/sec7pic1.jpeg" caption="beautiful" onClick={(e) => handlePolaroidClick(e, [-2.4, 4.0, -5.8])} />
-          <HangingPolaroid position={[0.0, 2.5, -5.8]} rotation={[0, 0, -0.04]} stringCurve={0.8} url="/sec7pic7.png" caption="Nature" onClick={(e) => handlePolaroidClick(e, [0.0, 2.5, -5.8])} />
-          <HangingPolaroid position={[2.5, 3.9, -5.8]} rotation={[0, 0, 0.05]} stringCurve={-1.0} url="/pic2.jpeg" caption="always smiling" onClick={(e) => handlePolaroidClick(e, [2.5, 3.9, -5.8])} />
-          <HangingPolaroid position={[4.8, 3.0, -5.8]} rotation={[0, 0, -0.07]} stringCurve={0.9} url="/sec7pic5Ghibli.jpeg" caption="shining" onClick={(e) => handlePolaroidClick(e, [4.8, 3.0, -5.8])} />
-          <HangingPolaroid position={[7.1, 4.3, -5.8]} rotation={[0, 0, 0.09]} stringCurve={-0.6} url="/pic3.jpeg" caption="perfect 💜" onClick={(e) => handlePolaroidClick(e, [7.1, 4.3, -5.8])} />
+          {configData?.polaroidUrls?.[1] && (
+            <HangingPolaroid position={[-6.8, 3.8, -5.8]} rotation={[0, 0, 0.06]} stringCurve={-0.8} themeHue={themeHue} url={configData.polaroidUrls[1]} caption={configData?.polaroidCaptions?.[1] || ""} onClick={(e) => handlePolaroidClick(e, [-6.8, 3.8, -5.8])} />
+          )}
+          {configData?.polaroidUrls?.[2] && (
+            <HangingPolaroid position={[-4.5, 2.6, -5.8]} rotation={[0, 0, -0.05]} stringCurve={1.0} themeHue={themeHue} url={configData.polaroidUrls[2]} caption={configData?.polaroidCaptions?.[2] || ""} onClick={(e) => handlePolaroidClick(e, [-4.5, 2.6, -5.8])} />
+          )}
+          {configData?.polaroidUrls?.[3] && (
+            <HangingPolaroid position={[-2.4, 4.0, -5.8]} rotation={[0, 0, 0.08]} stringCurve={-1.2} themeHue={themeHue} url={configData.polaroidUrls[3]} caption={configData?.polaroidCaptions?.[3] || ""} onClick={(e) => handlePolaroidClick(e, [-2.4, 4.0, -5.8])} />
+          )}
+          {configData?.polaroidUrls?.[4] && (
+            <HangingPolaroid position={[0.0, 2.5, -5.8]} rotation={[0, 0, -0.04]} stringCurve={0.8} themeHue={themeHue} url={configData.polaroidUrls[4]} caption={configData?.polaroidCaptions?.[4] || ""} onClick={(e) => handlePolaroidClick(e, [0.0, 2.5, -5.8])} />
+          )}
+          {configData?.polaroidUrls?.[5] && (
+            <HangingPolaroid position={[2.5, 3.9, -5.8]} rotation={[0, 0, 0.05]} stringCurve={-1.0} themeHue={themeHue} url={configData.polaroidUrls[5]} caption={configData?.polaroidCaptions?.[5] || ""} onClick={(e) => handlePolaroidClick(e, [2.5, 3.9, -5.8])} />
+          )}
+          {configData?.polaroidUrls?.[6] && (
+            <HangingPolaroid position={[4.8, 3.0, -5.8]} rotation={[0, 0, -0.07]} stringCurve={0.9} themeHue={themeHue} url={configData.polaroidUrls[6]} caption={configData?.polaroidCaptions?.[6] || ""} onClick={(e) => handlePolaroidClick(e, [4.8, 3.0, -5.8])} />
+          )}
+          {configData?.polaroidUrls?.[7] && (
+            <HangingPolaroid position={[7.1, 4.3, -5.8]} rotation={[0, 0, 0.09]} stringCurve={-0.6} themeHue={themeHue} url={configData.polaroidUrls[7]} caption={configData?.polaroidCaptions?.[7] || ""} onClick={(e) => handlePolaroidClick(e, [7.1, 4.3, -5.8])} />
+          )}
         </Suspense>
 
         {/* ── Mahogany Desk & Legs ── */}
@@ -525,7 +542,7 @@ export default function LetterScene({ onOpen, active, isFoldingBack }) {
         </group>
 
         {/* The Envelope */}
-        <Envelope onOpen={onOpen} />
+        <Envelope onOpen={onOpen} themeHue={themeHue} />
 
         {/* Unconstrained Camera Controls */}
         <CameraController focusData={focusData} />

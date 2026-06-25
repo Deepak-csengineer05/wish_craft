@@ -19,8 +19,8 @@
 
 .section-placeholder h1 {
   font-family: 'DM Sans', sans-serif;
-  color: #d8b4fe;
+  color: hsl(var(--theme-hue, 198), 95%, 85%);
   font-weight: 300;
   font-size: 2rem;
-  text-shadow: 0 0 20px rgba(216, 180, 254, 0.4);
+  text-shadow: 0 0 20px hsla(var(--theme-hue, 198), 95%, 85%, 0.4);
 }

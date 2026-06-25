@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { useGift } from '../../context/GiftContext';
 import './MainSections.css';
 import Section1 from '../Section1/Section1';
 import Section2 from '../Section2/Section2';
@@ -13,23 +14,31 @@ import Section10 from '../Section10/Section10';
 import Section11 from '../Section11/Section11';
 
 export default function MainSections({ onProceed, onVideoStart, onSection5Start, initialSection = 1, isHubMode = false }) {
-  const [currentSection, setCurrentSection] = useState(initialSection);
+  const { isSectionActive } = useGift();
+
+  // Pre-calculate array of active section numbers (e.g. [1, 3, 5, 8, 10, 11])
+  const activeList = useMemo(() => {
+    return [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].filter(num => isSectionActive(`section${num}`));
+  }, [isSectionActive]);
+
+  const [currentSection, setCurrentSection] = useState(() => {
+    return isHubMode ? initialSection : (activeList[0] || 1);
+  });
 
   useEffect(() => {
-    setCurrentSection(initialSection);
-  }, [initialSection]);
+    setCurrentSection(isHubMode ? initialSection : (activeList[0] || 1));
+  }, [initialSection, isHubMode, activeList]);
 
   const goToNextSection = () => {
     if (isHubMode) {
       onProceed?.();
     } else {
-      setCurrentSection((prev) => {
-        const nextSection = prev + 1;
-        if (nextSection > 11) {
-          onProceed?.();
-        }
-        return nextSection;
-      });
+      const curIdx = activeList.indexOf(currentSection);
+      if (curIdx === -1 || curIdx + 1 >= activeList.length) {
+        onProceed?.();
+      } else {
+        setCurrentSection(activeList[curIdx + 1]);
+      }
     }
   };
 

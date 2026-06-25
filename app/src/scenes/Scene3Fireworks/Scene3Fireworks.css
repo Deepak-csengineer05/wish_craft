@@ -78,7 +78,7 @@
     0 0 40px rgba(212, 168, 83, 0.3);
 }
 
-/* Name slot to overlap Poojetha and Lunar in the exact same spot */
+/* Name slot to overlap recipientName and nickname in the exact same spot */
 .sc3-name-slot {
   position: relative;
   height: clamp(5rem, 12vw, 10rem);
@@ -87,37 +87,37 @@
   justify-content: center;
 }
 
-.sc3-word-poojetha {
+.sc3-word-recipient {
   position: absolute;
   font-size: clamp(4rem, 10vw, 8rem);
-  color: #b39ddb;
+  color: var(--violet-light, var(--violet-light, #b39ddb));
   text-shadow:
-    0 0 18px rgba(179, 157, 219, 0.8),
-    0 0 40px rgba(123, 82, 200, 0.5);
+    0 0 18px hsla(var(--theme-hue, 198), 50%, 75%, 0.8),
+    0 0 40px hsla(var(--theme-hue, 198), 50%, 55%, 0.5);
   transition: opacity 2s ease, transform 2s ease;
 }
 
-.sc3-word-poojetha.fade-out {
+.sc3-word-recipient.fade-out {
   opacity: 0 !important; /* Force override .vis */
   transform: scale(0.95);
   filter: blur(4px);
 }
 
-.sc3-word-lunar {
+.sc3-word-nickname {
   position: absolute;
   font-family: 'Dancing Script', cursive !important;
   font-style: normal !important;
   font-weight: 700 !important;
   font-size: clamp(5rem, 12vw, 10rem);
-  color: #b39ddb;
+  color: var(--violet-light, var(--violet-light, #b39ddb));
   text-shadow:
-    0 0 25px rgba(179, 157, 219, 0.7),
-    0 0 55px rgba(123, 82, 200, 0.45),
-    0 0 90px rgba(74, 44, 158, 0.2);
-  animation: lunarBreath 4s infinite ease-in-out 1.5s;
+    0 0 25px hsla(var(--theme-hue, 198), 50%, 75%, 0.7),
+    0 0 55px hsla(var(--theme-hue, 198), 50%, 55%, 0.45),
+    0 0 90px hsla(var(--theme-hue, 198), 56%, 40%, 0.2);
+  animation: nicknameBreath 4s infinite ease-in-out 1.5s;
 }
 
-@keyframes lunarBreath {
+@keyframes nicknameBreath {
   0%, 100% { filter: brightness(1); transform: scale(1) translateY(0); }
   50% { filter: brightness(1.2); transform: scale(1.03) translateY(-5px); }
 }
@@ -132,8 +132,8 @@
   right: 2.5rem;
   z-index: 20;
   background: transparent;
-  border: 1.5px solid rgba(179, 157, 219, 0.2);
-  color: rgba(179, 157, 219, 0.55);
+  border: 1.5px solid hsla(var(--theme-hue, 198), 50%, 75%, 0.2);
+  color: hsla(var(--theme-hue, 198), 50%, 75%, 0.55);
   padding: 0.6rem 1.5rem;
   border-radius: 50px;
   font-family: 'Inter', sans-serif;
@@ -152,8 +152,8 @@
 }
 
 .sc3-skip:hover {
-  background: rgba(179, 157, 219, 0.08);
-  border-color: rgba(179, 157, 219, 0.5);
+  background: hsla(var(--theme-hue, 198), 50%, 75%, 0.08);
+  border-color: hsla(var(--theme-hue, 198), 50%, 75%, 0.5);
   color: #fff;
 }
 

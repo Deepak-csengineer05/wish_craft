@@ -33,9 +33,9 @@ export default defineConfig({
         enabled: true
       },
       manifest: {
-        name: 'Lunar Gift',
-        short_name: 'Lunar',
-        description: 'A magical birthday experience for Poojetha',
+        name: 'Wish Craft',
+        short_name: 'Wish Craft',
+        description: 'A personalized 3D memory vault builder',
         theme_color: '#1a0a38',
         background_color: '#000000',
         display: 'standalone',

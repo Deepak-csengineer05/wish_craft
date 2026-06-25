@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useGift } from '../../context/GiftContext';
 import './Scene4Envelope.css';
 import { trackEvent } from '../../analytics';
 
 export default function Scene4Envelope({ onProceed, onDoorsOpen }) {
+  const { giftId } = useGift();
   const [phase, setPhase] = useState('falling'); // falling, landed, button-ready, spinning, doors-opening, done
   const [crackPoints, setCrackPoints] = useState([]);
   const [clipPathLeft, setClipPathLeft] = useState('');
@@ -152,7 +154,7 @@ export default function Scene4Envelope({ onProceed, onDoorsOpen }) {
 
   const handleButtonClick = () => {
     if (phase !== 'button-ready') return;
-    trackEvent('Scene4', 'moon_button_click', { clicked: true });
+    trackEvent(giftId, 'Scene4', 'moon_button_click', { clicked: true });
     setPhase('spinning');
     setMousePos({ rx: 0, ry: 0 });
     setBtnPos({ x: 0, y: 0 });
@@ -252,23 +254,23 @@ export default function Scene4Envelope({ onProceed, onDoorsOpen }) {
         >
           <div className="sc4-envelope">
             <svg viewBox="0 0 320 220" className="sc4-env-svg">
-              {/* Violet Envelope Base perfectly aligned */}
-              <rect x="0" y="0" width="320" height="220" rx="8" fill="#3b0764" />
-              <path d="M 0,0 L 160,115 L 320,0 Z" fill="#581c87" />
-              <path d="M 0,0 L 160,115 L 0,220 Z" fill="#4c1d95" />
-              <path d="M 320,0 L 160,115 L 320,220 Z" fill="#4c1d95" />
-              <path d="M 0,220 L 160,110 L 320,220 Z" fill="#6b21a8" />
+              {/* Envelope Base perfectly aligned dynamically with theme */}
+              <rect x="0" y="0" width="320" height="220" rx="8" fill="hsl(var(--theme-hue, 198), 70%, 15%)" />
+              <path d="M 0,0 L 160,115 L 320,0 Z" fill="hsl(var(--theme-hue, 198), 65%, 28%)" />
+              <path d="M 0,0 L 160,115 L 0,220 Z" fill="hsl(var(--theme-hue, 198), 65%, 22%)" />
+              <path d="M 320,0 L 160,115 L 320,220 Z" fill="hsl(var(--theme-hue, 198), 65%, 22%)" />
+              <path d="M 0,220 L 160,110 L 320,220 Z" fill="hsl(var(--theme-hue, 198), 65%, 33%)" />
               <path d="M 0,0 L 160,115 L 320,0" fill="none" stroke="rgba(0,0,0,0.15)" strokeWidth="3" strokeLinejoin="round" />
               <path d="M 0,220 L 160,110 L 320,220" fill="none" stroke="rgba(0,0,0,0.2)" strokeWidth="4" strokeLinejoin="round" />
               
               {/* Wax Seal Base with static Crescent Moon inside */}
-              <circle cx="160" cy="115" r="26" fill="#2e1065" stroke="#1e1b4b" strokeWidth="2" />
+              <circle cx="160" cy="115" r="26" fill="hsl(var(--theme-hue, 198), 70%, 12%)" stroke="hsl(var(--theme-hue, 198), 80%, 8%)" strokeWidth="2" />
               <g transform="translate(147, 102) scale(1.1)">
-                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="#7e22ce" />
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="hsl(var(--theme-hue, 198), 70%, 45%)" />
               </g>
 
               {/* Custom Envelope Text */}
-              <text x="160" y="58" fontSize="16" fill="#d8b4fe" textAnchor="middle" dominantBaseline="middle" style={{ fontFamily: 'var(--font-primary, sans-serif)', letterSpacing: '1px', fontStyle: 'italic' }}>
+              <text x="160" y="58" fontSize="16" fill="hsl(var(--theme-hue, 198), 75%, 75%)" textAnchor="middle" dominantBaseline="middle" style={{ fontFamily: 'var(--font-primary, sans-serif)', letterSpacing: '1px', fontStyle: 'italic' }}>
                 Are you waiting to explore ?
               </text>
             </svg>

@@ -2,8 +2,10 @@ import React, { useState, useMemo, useEffect } from 'react';
 import './Section7.css';
 import ScratchCard from './ScratchCard';
 import { trackEvent } from '../../analytics';
+import { useGift } from '../../context/GiftContext';
 
 export default function Section7({ onNext }) {
+  const { giftId, configData } = useGift();
   const [focusedId, setFocusedId] = useState(null);
   const [transformedIds, setTransformedIds] = useState([]);
   const [isSectionComplete, setIsSectionComplete] = useState(false);
@@ -16,7 +18,16 @@ export default function Section7({ onNext }) {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const CARDS = [1, 2, 3, 4, 5, 6, 7];
+  const CARDS = useMemo(() => {
+    if (configData?.scratchCount) {
+      return Array.from({ length: configData.scratchCount }, (_, i) => i + 1);
+    }
+    const uploadedKeys = Object.keys(configData?.scratchUrls || {});
+    if (uploadedKeys.length > 0) {
+      return uploadedKeys.map(k => parseInt(k, 10)).sort((a, b) => a - b);
+    }
+    return [1, 2, 3, 4, 5, 6, 7];
+  }, [configData]);
 
   // Generate random static stars for the background once
   const stars = useMemo(() => {
@@ -37,19 +48,30 @@ export default function Section7({ onNext }) {
 
   const closeFocus = () => {
     setFocusedId(null);
-    if (transformedIds.length === 7 && !isSectionComplete) {
+    if (transformedIds.length === CARDS.length && !isSectionComplete) {
       setTimeout(() => setIsSectionComplete(true), 2000);
     }
   };
 
   const handleTransformComplete = (id) => {
     if (!transformedIds.includes(id)) {
-      trackEvent('Section7', 'scratch_reveal', {
+      trackEvent(giftId, 'Section7', 'scratch_reveal', {
         cardId: id,
         revealOrder: transformedIds.length + 1,
       });
       setTransformedIds(prev => [...prev, id]);
     }
+  };
+
+  const getCardImageSrc = (id, isGhibliStyle = false) => {
+    if (isGhibliStyle) {
+      const ghibliUrl = configData?.scratchGhibliUrls?.[id];
+      if (ghibliUrl) return ghibliUrl;
+      return `/sec7pic${id}Ghibli.${id === 6 ? 'png' : 'jpeg'}`;
+    }
+    const origUrl = configData?.scratchUrls?.[id];
+    if (origUrl) return origUrl;
+    return `/sec7pic${id}.${[4, 5, 7].includes(id) ? 'png' : 'jpeg'}`;
   };
 
   return (
@@ -100,13 +122,13 @@ export default function Section7({ onNext }) {
                 <div className="mini-card-visual">
                   {isTransformed ? (
                     <img 
-                      src={`/sec7pic${id}Ghibli.${id === 6 ? 'png' : 'jpeg'}`} 
+                      src={getCardImageSrc(id, true)} 
                       alt={`Thumbnail ${id}`} 
                       className="mini-ghibli-layer" 
                       style={{ objectFit: 'cover' }} 
                       onError={(e) => {
                         e.target.onerror = null;
-                        e.target.src = `/sec7pic${id}.${[4, 5, 7].includes(id) ? 'png' : 'jpeg'}`;
+                        e.target.src = getCardImageSrc(id, false);
                       }}
                     />
                   ) : (
@@ -129,45 +151,45 @@ export default function Section7({ onNext }) {
             </div>
 
             {CARDS.map((id, index) => {
-              const rotateZAngle = (index / 7) * 360;
-              const isTransformed = transformedIds.includes(id);
-              const isHidden = focusedId === id; // Hide the orbiting copy when focused
+               const rotateZAngle = (index / CARDS.length) * 360;
+               const isTransformed = transformedIds.includes(id);
+               const isHidden = focusedId === id; // Hide the orbiting copy when focused
 
-              return (
-                <div 
-                  key={`orbit-${id}`}
-                  className="s7-orbit-pivot" 
-                  style={{ '--angle': `${rotateZAngle}deg` }}
-                >
-                  <div className="s7-orbit-item-container">
-                    <div 
-                      className={`s7-card-counter-rotator ${isHidden ? 'hidden' : ''} ${isTransformed ? 'transformed' : ''}`}
-                      onClick={() => handleCardClick(id)}
-                    >
-                       {/* Miniature representation for the orbit with nice V1 stars */}
-                       <div className="mini-card-visual">
-                         {isTransformed ? (
-                           <img 
-                             src={`/sec7pic${id}Ghibli.${id === 6 ? 'png' : 'jpeg'}`} 
-                             alt={`Thumbnail ${id}`} 
-                             className="mini-ghibli-layer" 
-                             style={{ objectFit: 'cover' }} 
-                             onError={(e) => {
-                               e.target.onerror = null;
-                               e.target.src = `/sec7pic${id}.${[4, 5, 7].includes(id) ? 'png' : 'jpeg'}`;
-                             }}
-                           />
-                         ) : (
-                           <div className="mini-scratch-layer">
-                             <span>Scratch to reveal</span>
-                           </div>
-                         )}
-                         <div className="mini-border-glow"></div>
-                       </div>
-                    </div>
-                  </div>
-                </div>
-              );
+               return (
+                 <div 
+                   key={`orbit-${id}`}
+                   className="s7-orbit-pivot" 
+                   style={{ '--angle': `${rotateZAngle}deg` }}
+                 >
+                   <div className="s7-orbit-item-container">
+                     <div 
+                       className={`s7-card-counter-rotator ${isHidden ? 'hidden' : ''} ${isTransformed ? 'transformed' : ''}`}
+                       onClick={() => handleCardClick(id)}
+                     >
+                        {/* Miniature representation for the orbit with nice V1 stars */}
+                        <div className="mini-card-visual">
+                          {isTransformed ? (
+                            <img 
+                              src={getCardImageSrc(id, true)} 
+                              alt={`Thumbnail ${id}`} 
+                              className="mini-ghibli-layer" 
+                              style={{ objectFit: 'cover' }} 
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = getCardImageSrc(id, false);
+                              }}
+                            />
+                          ) : (
+                            <div className="mini-scratch-layer">
+                              <span>Scratch to reveal</span>
+                            </div>
+                          )}
+                          <div className="mini-border-glow"></div>
+                        </div>
+                     </div>
+                   </div>
+                 </div>
+               );
             })}
           </div>
         </div>
@@ -193,7 +215,7 @@ export default function Section7({ onNext }) {
         <div className="s7-finale-content">
           <h2>Did you like these?</h2>
           <p>Every memory with you rests safely among the stars.</p>
-          <button className="next-section-btn s7-next" style={{ padding: '15px 40px', fontSize: '1.2rem', borderRadius: '30px', cursor: 'pointer', background: 'linear-gradient(135deg, #a374ff, #ff8a65)', border: 'none', color: '#fff', marginTop: '20px' }} onClick={onNext}>
+          <button className="next-section-btn s7-next" style={{ padding: '15px 40px', fontSize: '1.2rem', borderRadius: '30px', cursor: 'pointer', background: 'var(--grad-violet-glow)', boxShadow: '0 8px 25px var(--violet-glow)', border: 'none', color: '#fff', marginTop: '20px' }} onClick={onNext}>
             Next Section
           </button>
         </div>

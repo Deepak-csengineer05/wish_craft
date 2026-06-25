@@ -3,31 +3,10 @@ import { Canvas } from '@react-three/fiber';
 import Experience from './Experience';
 import './Section4.css';
 import { trackEvent } from '../../analytics';
-
-const LETTERS = [
-  {
-    image: "gift1.jpeg", // Add your image path here (e.g., "/images/memory1.jpg")
-    text: "A Sketch of you \n\nThis is the first art...I wish to do for you."
-  },
-  {
-    image: "gift2.jpeg",
-    text: "Even you look beautiful in violet 💜..\n\nThis red suits you."
-  },
-  {
-    image: "gift3.jpeg",
-    text: "My first Ghibli art done , just to see your smile 😊."
-  },
-  {
-    image: "pic1.jpeg",
-    text: "Even an AI image looks beautiful , because of you."
-  },
-  {
-    image: "pic4.jpeg",
-    text: "3D Model Art\n\nEven in all trends , you look unique."
-  }
-];
+import { useGift } from '../../context/GiftContext';
 
 export default function Section4({ onNext }) {
+  const { giftId, configData, config } = useGift();
   const [activeIndex, setActiveIndex] = useState(0);
   const [openedBoxes, setOpenedBoxes] = useState([false, false, false, false, false]);
   const [lettersViewed, setLettersViewed] = useState([false, false, false, false, false]);
@@ -36,6 +15,41 @@ export default function Section4({ onNext }) {
   const [feedbackResponse, setFeedbackResponse] = useState(null); // 'yes' or 'no'
   const [isMobile, setIsMobile] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
+
+  const themeHue = config?.theme_hue ?? 198;
+  const getThemedHeartEmoji = (hue) => {
+    if (hue >= 250 && hue <= 290) return '💜'; // Violet
+    if (hue > 290 && hue <= 350) return '💖';  // Pink
+    if (hue > 350 || hue <= 15) return '❤️';   // Red
+    if (hue > 15 && hue <= 50) return '💛';    // Yellow/Orange
+    if (hue > 50 && hue <= 160) return '💚';   // Green
+    if (hue > 160 && hue <= 205) return '🩵';  // Teal
+    return '💙';                              // Navy/Blue
+  };
+  const heartEmoji = getThemedHeartEmoji(themeHue);
+
+  const letters = [
+    {
+      image: configData?.giftBoxUrls?.[1] || "gift1.jpeg",
+      text: configData?.giftBoxText1 || "A beautiful memory \n\nEvery day spent with you is a gift in itself."
+    },
+    {
+      image: configData?.giftBoxUrls?.[2] || "gift2.jpeg",
+      text: configData?.giftBoxText2 || "Your unique vibe 💜..\n\nYou bring so much color and joy into my world."
+    },
+    {
+      image: configData?.giftBoxUrls?.[3] || "gift3.jpeg",
+      text: configData?.giftBoxText3 || "Special moments 😊.\n\nThank you for always being there and making me smile."
+    },
+    {
+      image: configData?.giftBoxUrls?.[4] || "pic1.jpeg",
+      text: configData?.giftBoxText4 || "A bright future 💫\n\nMay all your dreams and wishes come true."
+    },
+    {
+      image: configData?.giftBoxUrls?.[5] || "pic4.jpeg",
+      text: configData?.giftBoxText5 || "A token of appreciation\n\nBecause you deserve the best on your special day."
+    }
+  ];
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -53,7 +67,7 @@ export default function Section4({ onNext }) {
       
       if (newOpened[index]) {
         // Box just opened
-        trackEvent('Section4', 'gift_box_open', { boxIndex: index });
+        trackEvent(giftId, 'Section4', 'gift_box_open', { boxIndex: index });
         setActiveLetter(index);
         setLettersViewed(prevViewed => {
           const newViewed = [...prevViewed];
@@ -68,7 +82,7 @@ export default function Section4({ onNext }) {
       }
       return newOpened;
     });
-  }, [activeLetter, showFeedback]);
+  }, [giftId, activeLetter, showFeedback]);
 
   const closeLetter = useCallback(() => {
     setActiveLetter(null);
@@ -112,7 +126,7 @@ export default function Section4({ onNext }) {
   }, [activeIndex, activeLetter, showFeedback, toggleBox]);
 
   const handleFeedback = (response) => {
-    trackEvent('Section4', 'feedback_response', { response });
+    trackEvent(giftId, 'Section4', 'feedback_response', { response });
     setFeedbackResponse(response);
   };
 
@@ -179,16 +193,16 @@ export default function Section4({ onNext }) {
             {activeLetter !== null && (
               <>
                 <div className="letter-image-container">
-                  {LETTERS[activeLetter].image ? (
-                    <img src={LETTERS[activeLetter].image} alt={`Memory ${activeLetter + 1}`} />
+                  {letters[activeLetter].image ? (
+                    <img src={letters[activeLetter].image} alt={`Memory ${activeLetter + 1}`} onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.style.background = '#4c1d95'; }} />
                   ) : (
                     <div className="image-placeholder">
                       <span>📸 Add Your Image Here</span>
                     </div>
                   )}
                 </div>
-                <div className="letter-text">
-                  {LETTERS[activeLetter].text}
+                <div className="letter-text" style={{ whiteSpace: 'pre-wrap' }}>
+                  {letters[activeLetter].text}
                 </div>
               </>
             )}
@@ -198,26 +212,26 @@ export default function Section4({ onNext }) {
 
       <div className={`feedback-dialog-overlay ${showFeedback ? 'show' : ''}`}>
         <div className="feedback-dialog">
-          <h2>Intha gifts unaku pidichiruka?</h2>
+          <h2>Do you like these gifts?</h2>
           
           {!feedbackResponse && (
             <div className="feedback-buttons">
-              <button className="feedback-btn yes" onClick={() => handleFeedback('yes')}>Pidichiruku</button>
-              <button className="feedback-btn no" onClick={() => handleFeedback('no')}>illa</button>
+              <button className="feedback-btn yes" onClick={() => handleFeedback('yes')}>I love them! {heartEmoji}</button>
+              <button className="feedback-btn no" onClick={() => handleFeedback('no')}>Not really</button>
             </div>
           )}
           
           {feedbackResponse === 'yes' && (
             <div className="feedback-response">
-              <p>nejamavey pidichiruka… innum neraya iruku, next ku polama?</p>
-              <button className="next-section-btn" onClick={onNext}>Next Section polam</button>
+              <p>I'm so glad they brought a smile to your face! Ready to see what's next?</p>
+              <button className="next-section-btn" onClick={onNext}>Continue ✨</button>
             </div>
           )}
 
           {feedbackResponse === 'no' && (
             <div className="feedback-response">
-              <p>Sorry, indha gifts unna happy aa feel panna vaikala… next time kandippa unaku smile vara vaikuren I am sure..</p>
-              <button className="next-section-btn" onClick={onNext}>Next Section Polama</button>
+              <p>I'm sorry they didn't match your expectations. I promise to make the next parts even better!</p>
+              <button className="next-section-btn" onClick={onNext}>Continue ✨</button>
             </div>
           )}
         </div>

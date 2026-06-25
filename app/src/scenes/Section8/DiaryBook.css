@@ -26,15 +26,21 @@
   gap: 30px;
 }
 
-/* The dark purple leather cover visible behind the actual pages */
+/* The dark theme-matching leather cover visible behind the actual pages */
 .db-book-container {
   padding: 10px 14px;
-  background-color: #3b0060;
+  background-color: hsl(var(--theme-hue, 198), 60%, 15%);
   border-radius: 6px 12px 12px 6px;
-  background-image: linear-gradient(90deg, #1f0033 0%, #3b0060 4%, #5a0096 96%, #3b0060 100%);
+  background-image: linear-gradient(
+    90deg, 
+    hsl(var(--theme-hue, 198), 70%, 7%) 0%, 
+    hsl(var(--theme-hue, 198), 60%, 15%) 4%, 
+    hsl(var(--theme-hue, 198), 50%, 25%) 96%, 
+    hsl(var(--theme-hue, 198), 60%, 15%) 100%
+  );
   box-shadow: 
     -6px 10px 30px rgba(0,0,0,0.6),
-    20px 20px 60px rgba(80, 0, 160, 0.4),
+    20px 20px 60px hsla(var(--theme-hue, 198), 100%, 31%, 0.4),
     inset 0 0 0 2px rgba(200, 160, 80, 0.4);
 }
 
@@ -123,10 +129,10 @@
 .db-intro-sub {
   font-family: 'Dancing Script', cursive;
   font-size: 2.6rem;
-  color: #6a00a0;
+  color: var(--violet-mid, #6a00a0);
   margin: 12px 0;
   font-weight: 700;
-  text-shadow: 0 2px 4px rgba(100,0,150,0.15);
+  text-shadow: 0 2px 4px hsla(var(--theme-hue, 198), 100%, 29%, 0.15);
 }
 
 .db-intro-note {
@@ -230,9 +236,9 @@
 }
 
 .db-dot.active {
-  background: #d9a0ff;
+  background: var(--violet-light, #d9a0ff);
   transform: scale(1.4);
-  box-shadow: 0 0 10px rgba(200, 100, 255, 0.7);
+  box-shadow: 0 0 10px hsla(var(--theme-hue, 198), 100%, 70%, 0.7);
 }
 
 .db-btn-group {
@@ -243,8 +249,8 @@
 .db-turn-btn {
   padding: 14px 28px;
   border-radius: 30px;
-  border: 1px solid rgba(220, 160, 255, 0.4);
-  background: rgba(40, 10, 60, 0.8);
+  border: 1px solid hsla(var(--theme-hue, 198), 100%, 81%, 0.4);
+  background: hsla(var(--theme-hue, 198), 71%, 14%, 0.8);
   color: #d1b170;
   font-family: 'Inter', sans-serif;
   font-size: 1.05rem;
@@ -256,15 +262,15 @@
 }
 
 .db-turn-btn.primary {
-  background: linear-gradient(135deg, rgba(100,20,160,0.8), rgba(60,10,100,0.9));
+  background: linear-gradient(135deg, hsla(var(--theme-hue, 198), 78%, 35%, 0.8), hsla(var(--theme-hue, 198), 82%, 22%, 0.9));
   color: #f0e6ff;
   padding: 14px 44px;
 }
 
 .db-turn-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(90,0,150,0.5);
-  background: linear-gradient(135deg, rgba(110,30,180,0.9), rgba(70,15,120,1));
+  box-shadow: 0 8px 20px hsla(var(--theme-hue, 198), 100%, 29%, 0.5);
+  background: linear-gradient(135deg, hsla(var(--theme-hue, 198), 71%, 41%, 0.9), hsla(var(--theme-hue, 198), 78%, 26%, 1));
   color: #fff;
 }
 

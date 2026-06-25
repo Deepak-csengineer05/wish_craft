@@ -1,15 +1,11 @@
 /* ═══════════════════════════════════════════════════════
-   🌙 LUNAR ANALYTICS — Firebase Realtime Database
-   Dual-write: localStorage (instant) + Firebase (remote)
+   ✨ WISH CRAFT ANALYTICS — Supabase Edition
+   Tracks visits, heartbeats, interactions, and replies.
    ═══════════════════════════════════════════════════════ */
 
-import { rtdb } from './firebase';
-import {
-  ref, set, get, update, push
-} from 'firebase/database';
+import { supabase } from './supabaseClient';
 
-const LOCAL_KEY = 'lunar_analytics';
-const FB_PATH   = 'lunar_analytics'; // Root path in Firebase RTDB
+const LOCAL_KEY = 'wish_analytics';
 
 /* ── Local Helpers ──────────────────────────────────── */
 function getLocalStore() {
@@ -32,40 +28,10 @@ function saveLocalStore(store) {
 function createEmptyStore() {
   return {
     visitCount: 0,
-    visits: [],
     totalTimeSpent: 0,
     sessionStart: null,
     lastActivity: null,
-    events: [],
-    section10Answers: {},
   };
-}
-
-/* ── Firebase Helpers ───────────────────────────────── */
-async function fbGet(path) {
-  try {
-    const snap = await get(ref(rtdb, path));
-    return snap.exists() ? snap.val() : null;
-  } catch (e) {
-    console.warn('[Analytics] Firebase read failed:', e);
-    return null;
-  }
-}
-
-async function fbSet(path, value) {
-  try {
-    await set(ref(rtdb, path), value);
-  } catch (e) {
-    console.warn('[Analytics] Firebase write failed:', e);
-  }
-}
-
-async function fbUpdate(path, value) {
-  try {
-    await update(ref(rtdb, path), value);
-  } catch (e) {
-    console.warn('[Analytics] Firebase update failed:', e);
-  }
 }
 
 /* ══════════════════════════════════════════════════════
@@ -73,49 +39,69 @@ async function fbUpdate(path, value) {
    ══════════════════════════════════════════════════════ */
 
 /**
- * Heartbeat ping — updates lastActivity timestamp.
+ * Heartbeat ping — updates last_activity timestamp.
  * Called every 5s while user is active.
  */
-export function ping() {
-  const now = Date.now();
+export async function ping(giftId) {
+  if (!giftId) return;
+  const now = new Date().toISOString();
 
   // Local
   const store = getLocalStore();
-  store.lastActivity = now;
+  store.lastActivity = Date.now();
   saveLocalStore(store);
 
-  // Firebase (fire-and-forget)
-  fbUpdate(FB_PATH, { lastActivity: now });
+  // Supabase (update gifts row)
+  await supabase
+    .from('gifts')
+    .update({ last_activity: now })
+    .eq('id', giftId);
 }
 
 /**
  * Record a new site visit.
  */
-export async function recordVisit() {
+export async function recordVisit(giftId) {
+  if (!giftId) return;
   const now = new Date().toISOString();
 
   // Local
   const store = getLocalStore();
   store.visitCount += 1;
-  store.visits.push(now);
   store.sessionStart = Date.now();
   saveLocalStore(store);
 
-  // Firebase
-  const fbVisitCount = (await fbGet(`${FB_PATH}/visitCount`)) || 0;
-  const updates = {
-    [`${FB_PATH}/visitCount`]: fbVisitCount + 1,
-    [`${FB_PATH}/sessionStart`]: Date.now(),
-  };
-  await update(ref(rtdb), updates);
-  // Push visit timestamp to list
-  await push(ref(rtdb, `${FB_PATH}/visits`), now);
+  // Supabase: Increments visit count. Uses RPC or direct value update.
+  // To avoid race conditions, we first fetch, then increment.
+  try {
+    const { data: gift } = await supabase
+      .from('gifts')
+      .select('visit_count')
+      .eq('id', giftId)
+      .single();
+
+    const currentVisits = gift?.visit_count || 0;
+
+    await supabase
+      .from('gifts')
+      .update({
+        visit_count: currentVisits + 1,
+        last_activity: now,
+      })
+      .eq('id', giftId);
+
+    // Track a visit event in analytic logs
+    await trackEvent(giftId, 'System', 'visit', { visitNum: currentVisits + 1 });
+  } catch (err) {
+    console.error('[Analytics] Failed to record visit:', err);
+  }
 }
 
 /**
  * Update cumulative time spent.
  */
-export function updateTimeSpent() {
+export async function updateTimeSpent(giftId) {
+  if (!giftId) return;
   const store = getLocalStore();
   if (store.sessionStart) {
     const elapsed = Math.floor((Date.now() - store.sessionStart) / 1000);
@@ -123,85 +109,87 @@ export function updateTimeSpent() {
     store.sessionStart = Date.now();
     saveLocalStore(store);
 
-    // Firebase
-    fbGet(`${FB_PATH}/totalTimeSpent`).then(current => {
-      fbUpdate(FB_PATH, {
-        totalTimeSpent: (current || 0) + elapsed,
-        sessionStart: Date.now(),
-      });
-    });
+    // Supabase
+    try {
+      const { data: gift } = await supabase
+        .from('gifts')
+        .select('total_time_spent')
+        .eq('id', giftId)
+        .single();
+
+      const currentSecs = gift?.total_time_spent || 0;
+
+      await supabase
+        .from('gifts')
+        .update({
+          total_time_spent: currentSecs + elapsed,
+          last_activity: new Date().toISOString(),
+        })
+        .eq('id', giftId);
+    } catch (err) {
+      console.error('[Analytics] Failed to update time spent:', err);
+    }
   }
 }
 
 /**
  * Track an interaction event.
  */
-export function trackEvent(category, action, data = {}) {
-  const event = {
-    id: Date.now() + '_' + Math.random().toString(36).slice(2, 6),
-    category,
-    action,
-    data,
-    timestamp: new Date().toISOString(),
-  };
-
-  // Local
-  const store = getLocalStore();
-  store.events.push(event);
-  saveLocalStore(store);
-
-  // Firebase — push to events list
-  push(ref(rtdb, `${FB_PATH}/events`), event).catch(e =>
-    console.warn('[Analytics] event push failed:', e)
-  );
+export async function trackEvent(giftId, category, action, data = {}) {
+  if (!giftId) return;
+  try {
+    await supabase.from('gift_analytics').insert({
+      gift_id: giftId,
+      category,
+      action,
+      data,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (e) {
+    console.warn('[Analytics] event push failed:', e);
+  }
 }
 
 /**
- * Store a Section 9 text answer.
+ * Store a Section 10 text answer.
  */
-export function trackSection10Answer(questionId, questionText, answer) {
-  const entry = {
-    question: questionText,
+export async function trackSection10Answer(giftId, questionId, questionText, answer) {
+  if (!giftId) return;
+  // Store Q&A responses in the analytical events table
+  await trackEvent(giftId, 'Section10', 'text_input', {
+    questionId,
+    questionText,
     answer,
-    timestamp: new Date().toISOString(),
-  };
-
-  // Local
-  const store = getLocalStore();
-  store.section10Answers[questionId] = entry;
-  saveLocalStore(store);
-
-  // Firebase
-  fbSet(`${FB_PATH}/section10Answers/${questionId}`, entry).catch(e =>
-    console.warn('[Analytics] Section10 save failed:', e)
-  );
+  });
 }
 
 /**
- * Get analytics (local, for legacy use).
- * Admin dashboard now uses Firebase listener directly.
+ * Store a Section 11 letter reply.
  */
-export function getAnalytics() {
-  return getLocalStore();
+export async function trackReply(giftId, text) {
+  if (!giftId) return;
+  try {
+    await supabase.from('gift_replies').insert({
+      gift_id: giftId,
+      text,
+      timestamp: new Date().toISOString(),
+    });
+    // Log interaction
+    await trackEvent(giftId, 'Section11', 'letter_reply_sent', { length: text.length });
+  } catch (err) {
+    console.error('[Analytics] Failed to send reply:', err);
+  }
 }
 
 /**
- * Get events by category (local).
+ * Clear analytics for a gift (your reset option).
  */
-export function getEventsByCategory(category) {
-  return getLocalStore().events.filter(e => e.category === category);
-}
-
-/**
- * Clear all analytics data from both local and Firebase.
- */
-export async function clearAnalytics() {
+export async function clearAnalytics(giftId) {
+  if (!giftId) return;
   localStorage.removeItem(LOCAL_KEY);
-  await fbSet(FB_PATH, null);
+
+  // Wipes analytics and replies for this gift, resets count
+  await supabase.from('gift_analytics').delete().eq('gift_id', giftId);
+  await supabase.from('gift_replies').delete().eq('gift_id', giftId);
+  await supabase.from('gifts').update({ visit_count: 0, total_time_spent: 0, last_activity: null }).eq('id', giftId);
 }
-
-/**
- * Returns the Firebase RTDB path for the admin dashboard to listen on.
- */
-export { FB_PATH };
-

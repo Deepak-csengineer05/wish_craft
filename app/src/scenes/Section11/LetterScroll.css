@@ -259,7 +259,7 @@
 .s11-magical-seal {
   width: 140px;
   height: 140px;
-  background: radial-gradient(circle at 35% 35%, #ab47bc, #6a1b9a, #38006b);
+  background: radial-gradient(circle at 35% 35%, hsl(var(--theme-hue, 198), 50%, 55%), hsl(var(--theme-hue, 198), 70%, 35%), hsl(var(--theme-hue, 198), 100%, 21%));
   border-radius: 50% 50% 50% 50% / 45% 55% 40% 60%;
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(0, 0, 0, 0.6), inset 5px 5px 15px rgba(255, 255, 255, 0.2);
   display: flex;

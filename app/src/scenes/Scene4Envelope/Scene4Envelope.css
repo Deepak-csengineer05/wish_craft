@@ -159,8 +159,8 @@
   height: 60px;
   border-radius: 50%;
   border: none;
-  background: radial-gradient(circle, #C9A0DC, #7B2FBE);
-  box-shadow: 0 0 20px #C9A0DC, 0 0 40px #7B2FBE;
+  background: radial-gradient(circle, hsl(var(--theme-hue, 198), 50%, 75%), hsl(var(--theme-hue, 198), 60%, 46%));
+  box-shadow: 0 0 20px hsl(var(--theme-hue, 198), 50%, 75%), 0 0 40px hsl(var(--theme-hue, 198), 60%, 46%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -185,7 +185,7 @@
 
 .sc4-moon-btn:hover {
   transform: scale(1.15) !important;
-  box-shadow: 0 0 30px #C9A0DC, 0 0 60px #7B2FBE;
+  box-shadow: 0 0 30px hsl(var(--theme-hue, 198), 50%, 75%), 0 0 60px hsl(var(--theme-hue, 198), 60%, 46%);
 }
 
 /* Spin and burst phase */
@@ -233,7 +233,7 @@
   font-family: 'DM Sans', sans-serif;
   font-size: 16px;
   font-style: italic;
-  color: #C9A0DC;
+  color: hsl(var(--theme-hue, 198), 50%, 75%);
   opacity: 0;
   transform: translateY(10px);
   transition: opacity 0.8s ease, transform 0.8s ease;
@@ -249,7 +249,7 @@
 .sc4-flash {
   position: fixed;
   inset: 0;
-  background: rgba(201, 160, 220, 0.15);
+  background: hsla(var(--theme-hue, 198), 50%, 75%, 0.15);
   opacity: 0;
   pointer-events: none;
   z-index: 150;
@@ -279,7 +279,7 @@
   font-weight: 300;
 }
 .sc4-temp-sub {
-  color: #C9A0DC;
+  color: hsl(var(--theme-hue, 198), 50%, 75%);
   font-family: 'DM Sans', sans-serif;
   font-size: 2rem;
   font-weight: 600;

@@ -1,61 +1,17 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import './Scene1Twin.css';
+import { useGift } from '../../context/GiftContext';
 import { trackEvent } from '../../analytics';
-
-/* ─── Dialogue Steps ─────────────────────────────── */
-const STEPS = [
-  {
-    id: 'intro',
-    moonMood: 'happy',
-    lines: ['Hi! Enoda Peru Moon 🌕', 'Inaiki yethachu special day va?'],
-    options: ['Of course ✦', 'Yes, for sure ✨'],
-    onOption: () => 'beautiful',
-  },
-  {
-    id: 'beautiful',
-    moonMood: 'curious',
-    lines: ['Haan...', 'Ama na kelvi patten nee enna vida azhagamey apidiya ?'],
-    options: ['Aama ✨', 'illaye'],
-    onOption: (idx) => idx === 0 ? 'twin' : 'beautiful_nudge',
-  },
-  {
-    id: 'beautiful_nudge',
-    moonMood: 'teasing',
-    lines: ['illaya, poi solladha —', " nee azhagadha iruka, aama sollu 💜"],
-    options: ['Aama ✨', 'illaye'],
-    onOption: (idx) => idx === 0 ? 'twin' : 'beautiful_nudge',
-  },
-  {
-    id: 'twin',
-    moonMood: 'excited',
-    lines: ['Seri appo...', 'Unakku en friend uh onnu kudukka sonnaan kudukkatuma ?'],
-    options: ['Haan kudu ✦', 'ila vena'],
-    onOption: (idx) => idx === 0 ? 'done' : 'twin_nudge',
-    noRepels: true,
-  },
-  {
-    id: 'twin_nudge',
-    moonMood: 'pleading',
-    lines: ['yen venam?', 'Na kudupen 💜'],
-    options: ['Haan kudu ✦', 'illa vena'],
-    onOption: (idx) => idx === 0 ? 'done' : 'twin_nudge',
-    noRepels: true,
-  },
-];
-
-const STEP_MAP = Object.fromEntries(STEPS.map(s => [s.id, s]));
+import './Scene1Twin.css';
 
 /* ─── Floating NO button (portal + physics) ──────── */
-function FloatingNo({ onNoClick, stepId }) {
-  // Start bottom-right of screen
+function FloatingNo({ onNoClick, stepId, declineText }) {
   const pos    = useRef({ x: window.innerWidth * 0.72, y: window.innerHeight * 0.72 });
   const vel    = useRef({ x: 0, y: 0 });
   const mouse  = useRef({ x: -999, y: -999 });
   const rafRef = useRef(null);
   const btnRef = useRef(null);
 
-  // Reset position each time repel step changes
   useEffect(() => {
     pos.current = {
       x: window.innerWidth  * (0.55 + Math.random() * 0.3),
@@ -64,7 +20,6 @@ function FloatingNo({ onNoClick, stepId }) {
     vel.current = { x: 0, y: 0 };
   }, [stepId]);
 
-  // Track mouse cursor only
   useEffect(() => {
     const onMove = (e) => {
       mouse.current = { x: e.clientX, y: e.clientY };
@@ -73,7 +28,6 @@ function FloatingNo({ onNoClick, stepId }) {
     return () => window.removeEventListener('mousemove', onMove);
   }, []);
 
-  // Physics loop
   useEffect(() => {
     const REPEL_RADIUS = 150;
     const REPEL_FORCE  = 18;
@@ -127,7 +81,7 @@ function FloatingNo({ onNoClick, stepId }) {
       }}
       onClick={onNoClick}
     >
-      illa venam
+      {declineText}
     </button>,
     document.body
   );
@@ -176,7 +130,6 @@ function MoonFace({ mood }) {
   );
 }
 
-/* ─── Speech Bubble ──────────────────────────────── */
 function SpeechBubble({ lines }) {
   return (
     <div className="speech-bubble">
@@ -190,8 +143,8 @@ function SpeechBubble({ lines }) {
   );
 }
 
-/* ─── Main Component ─────────────────────────────── */
 export default function Scene1Twin({ onProceed, onAudioStart }) {
+  const { giftId, configData } = useGift();
   const [stepId, setStepId]       = useState('intro');
   const [exiting, setExiting]     = useState(false);
   const [bubbleKey, setBubbleKey] = useState(0);
@@ -204,10 +157,86 @@ export default function Scene1Twin({ onProceed, onAudioStart }) {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const step = STEP_MAP[stepId];
+  const stepList = useMemo(() => {
+    return [
+      {
+        id: 'intro',
+        moonMood: 'happy',
+        lines: [
+          configData?.introText1 || 'Hi! I am Moon 🌕',
+          configData?.introText2 || 'Is today a special day?'
+        ],
+        options: [
+          configData?.introOpt1 || 'Of course ✦',
+          configData?.introOpt2 || 'Yes, for sure ✨'
+        ],
+        onOption: () => 'beautiful',
+      },
+      {
+        id: 'beautiful',
+        moonMood: 'curious',
+        lines: [
+          'Oh...',
+          configData?.moonLine2 || 'I heard that you are even brighter than me, is that true?'
+        ],
+        options: [
+          configData?.moonOpt2_1 || 'Yes ✨',
+          configData?.moonOpt2_2 || 'Not really'
+        ],
+        onOption: (idx) => idx === 0 ? 'twin' : 'beautiful_nudge',
+      },
+      {
+        id: 'beautiful_nudge',
+        moonMood: 'teasing',
+        lines: [
+          'No way...',
+          configData?.moonLine3 || "Don't be shy, you look absolutely wonderful today! 💜"
+        ],
+        options: [
+          configData?.moonOpt2_1 || 'Yes ✨',
+          configData?.moonOpt2_2 || 'Not really'
+        ],
+        onOption: (idx) => idx === 0 ? 'twin' : 'beautiful_nudge',
+      },
+      {
+        id: 'twin',
+        moonMood: 'excited',
+        lines: [
+          'Perfect...',
+          configData?.moonLine4 || 'So... my friend wanted to give you a surprise, can I show you?'
+        ],
+        options: [
+          configData?.moonOpt4_1 || 'Yes, please! ✦',
+          configData?.moonOpt4_2 || 'No, thanks'
+        ],
+        onOption: (idx) => idx === 0 ? 'done' : 'twin_nudge',
+        noRepels: true,
+      },
+      {
+        id: 'twin_nudge',
+        moonMood: 'pleading',
+        lines: [
+          'Please?',
+          configData?.moonLine5 || "Are you sure? I think you'll love it! 💜"
+        ],
+        options: [
+          configData?.moonOpt4_1 || 'Yes, please! ✦',
+          configData?.moonOpt4_2 || 'No, thanks'
+        ],
+        onOption: (idx) => idx === 0 ? 'done' : 'twin_nudge',
+        noRepels: true,
+      },
+    ];
+  }, [configData]);
+
+  const stepMap = useMemo(() => {
+    return Object.fromEntries(stepList.map(s => [s.id, s]));
+  }, [stepList]);
+
+  const step = stepMap[stepId] || stepList[0];
 
   const handleOption = useCallback((idx) => {
-    trackEvent('Scene1', 'option_click', {
+    trackEvent(giftId, 'Scene1', 'option_click', {
       stepId,
       optionIndex: idx,
       optionText: step.options[idx],
@@ -221,13 +250,11 @@ export default function Scene1Twin({ onProceed, onAudioStart }) {
     }
     setStepId(nextId);
     setBubbleKey(k => k + 1);
-  }, [step, stepId, onProceed, onAudioStart]);
+  }, [step, stepId, onProceed, onAudioStart, giftId]);
 
   return (
     <div className={`scene1-wrapper ${exiting ? 'scene1-exit' : ''}`}>
       <div className="scene1-content">
-
-        {/* Moon */}
         <div className="moon-container">
           <MoonFace mood={step.moonMood} />
           <span className="orbit-star s1">✦</span>
@@ -238,12 +265,9 @@ export default function Scene1Twin({ onProceed, onAudioStart }) {
           <span className="orbit-star s7">⭐</span>
         </div>
 
-        {/* Speech bubble */}
         <SpeechBubble lines={step.lines} key={bubbleKey} />
 
-        {/* Buttons */}
         <div className="scene1-buttons">
-          {/* Always show YES */}
           <button
             className="btn-option btn-yes"
             onClick={() => handleOption(0)}
@@ -251,9 +275,8 @@ export default function Scene1Twin({ onProceed, onAudioStart }) {
             {step.options[0]}
           </button>
 
-          {/* NO: floating portal if repels, otherwise normal */}
           {(step.noRepels && !isMobile) ? (
-            <FloatingNo onNoClick={() => handleOption(1)} stepId={stepId} />
+            <FloatingNo onNoClick={() => handleOption(1)} stepId={stepId} declineText={step.options[1]} />
           ) : (
             <button
               className="btn-option btn-no"

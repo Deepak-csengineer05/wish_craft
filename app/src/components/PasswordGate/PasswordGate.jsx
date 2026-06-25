@@ -1,31 +1,34 @@
 import React, { useState, useRef } from 'react';
-import './PasswordGate.css';
+import { useGift } from '../../context/GiftContext';
 import { trackEvent } from '../../analytics';
+import './PasswordGate.css';
 
-const CORRECT_PASSWORD = 'Lunar@17';
-const ADMIN_PASSWORD = 'Admin@17';
-
-export default function PasswordGate({ onUnlock, onAdminLogin }) {
+export default function PasswordGate({ onUnlock, onyourLogin }) {
+  const { giftId, config } = useGift();
   const [value, setValue] = useState('');
   const [shaking, setShaking] = useState(false);
   const [error, setError] = useState('');
   const inputRef = useRef(null);
 
+  const CORRECT_PASSWORD = config?.user_password || 'Wish@17';
+  const your_PASSWORD = config?.your_password || 'your@17';
+  const recipientName = config?.recipient_name || 'Friend';
+
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    if (value === ADMIN_PASSWORD && onAdminLogin) {
-      onAdminLogin();
+    if (value === your_PASSWORD && onyourLogin) {
+      onyourLogin();
       return;
     }
     if (value === CORRECT_PASSWORD) {
-      localStorage.setItem('lunar_unlocked', 'true');
+      localStorage.setItem(`wish_unlocked_${giftId}`, 'true');
       onUnlock();
     } else {
-      // Send the actual typed incorrect password to Firebase Analytics
-      trackEvent('PasswordGate', 'failed_attempt', { attempted: value, length: value.length });
+      // Send the actual typed incorrect password to Supabase Analytics
+      trackEvent(giftId, 'PasswordGate', 'failed_attempt', { attempted: value, length: value.length });
       setShaking(true);
-      setError("are you poojetha? this gift was made only for her — you don't have permission to open it ok.");
+      setError(`Are you ${recipientName}? This vault was made only for them — you don't have permission to open it.`);
       setValue('');
       setTimeout(() => setShaking(false), 650);
       inputRef.current?.focus();

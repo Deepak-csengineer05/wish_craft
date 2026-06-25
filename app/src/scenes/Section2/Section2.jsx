@@ -1,30 +1,31 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './Section2.css';
 import { trackEvent } from '../../analytics';
-
-// Sample photos to display. We stagger their anchor points and initial sway timings perfectly.
-const PHOTOS = [
-  { id: 1, src: 'pic1.jpeg', caption: 'Smile ✨', anchorX: 10, stringLength: 120, rotSpeed: 3.5 },
-  { id: 6, src: 'pic2.jpeg', caption: 'Pooji 🌙', anchorX: 20, stringLength: 320, rotSpeed: 5.1, isCurly: true },
-  { id: 2, src: 'pic3.jpeg', caption: 'violet Saree 💜', anchorX: 35, stringLength: 180, rotSpeed: 4.2 },
-  { id: 7, src: 'pic4.jpeg', caption: '3d model art 🖌️', anchorX: 47, stringLength: 400, rotSpeed: 6.2, isCurly: true },
-  { id: 3, src: 'pic5.jpeg', caption: 'Your Favourite 😊', anchorX: 58, stringLength: 140, rotSpeed: 3.8 },
-  { id: 4, src: 'pic6.jpeg', caption: 'shining 💫', anchorX: 72, stringLength: 200, rotSpeed: 4.5 },
-  { id: 8, src: 'pic7.jpeg', caption: 'My First Ghibli 🖼️', anchorX: 82, stringLength: 340, rotSpeed: 5.4, isCurly: true },
-  { id: 5, src: 'pic8.jpeg', caption: 'Bangle 💜', anchorX: 92, stringLength: 160, rotSpeed: 3.9 }
-];
+import { useGift } from '../../context/GiftContext';
 
 export default function Section2({ onNext }) {
+  const { giftId, configData } = useGift();
   const [activePhoto, setActivePhoto] = useState(null);
   const wrapperRef = useRef(null);
+
+  const photos = [
+    { id: 1, src: configData?.polaroidUrls?.[1] || 'pic1.jpeg', caption: configData?.polaroidCaptions?.[1] || 'Smile ✨', anchorX: 10, stringLength: 120, rotSpeed: 3.5 },
+    { id: 6, src: configData?.polaroidUrls?.[6] || 'pic2.jpeg', caption: configData?.polaroidCaptions?.[6] || 'A Sweet Memory 🌙', anchorX: 20, stringLength: 320, rotSpeed: 5.1, isCurly: true },
+    { id: 2, src: configData?.polaroidUrls?.[2] || 'pic3.jpeg', caption: configData?.polaroidCaptions?.[2] || 'Happy Times 💜', anchorX: 35, stringLength: 180, rotSpeed: 4.2 },
+    { id: 7, src: configData?.polaroidUrls?.[7] || 'pic4.jpeg', caption: configData?.polaroidCaptions?.[7] || 'Creative Moments 🖌️', anchorX: 47, stringLength: 400, rotSpeed: 6.2, isCurly: true },
+    { id: 3, src: configData?.polaroidUrls?.[3] || 'pic5.jpeg', caption: configData?.polaroidCaptions?.[3] || 'Your Favorite 😊', anchorX: 58, stringLength: 140, rotSpeed: 3.8 },
+    { id: 4, src: configData?.polaroidUrls?.[4] || 'pic6.jpeg', caption: configData?.polaroidCaptions?.[4] || 'Shining Bright 💫', anchorX: 72, stringLength: 200, rotSpeed: 4.5 },
+    { id: 8, src: configData?.polaroidUrls?.[8] || 'pic7.jpeg', caption: configData?.polaroidCaptions?.[8] || 'Artistic Vibes 🖼️', anchorX: 82, stringLength: 340, rotSpeed: 5.4, isCurly: true },
+    { id: 5, src: configData?.polaroidUrls?.[5] || 'pic8.jpeg', caption: configData?.polaroidCaptions?.[5] || 'Priceless Bond 💜', anchorX: 92, stringLength: 160, rotSpeed: 3.9 }
+  ].filter(p => !configData?.polaroidCount || p.id <= configData.polaroidCount);
 
   // When a photo is clicked, it becomes active and the string "snaps".
   // Clicking the backdrop closes it and allows clicking others.
   const handlePhotoClick = (id) => {
     if (activePhoto === id) return;
-    trackEvent('Section2', 'photo_click', {
+    trackEvent(giftId, 'Section2', 'photo_click', {
       photoId: id,
-      caption: PHOTOS.find(p => p.id === id)?.caption,
+      caption: photos.find(p => p.id === id)?.caption,
     });
     setActivePhoto(id);
   };
@@ -38,14 +39,14 @@ export default function Section2({ onNext }) {
     const handleKeyDown = (e) => {
       if (!activePhoto) return;
       
-      const currentIndex = PHOTOS.findIndex(p => p.id === activePhoto);
+      const currentIndex = photos.findIndex(p => p.id === activePhoto);
       
       if (e.key === 'ArrowRight') {
-        const nextIndex = (currentIndex + 1) % PHOTOS.length;
-        setActivePhoto(PHOTOS[nextIndex].id);
+        const nextIndex = (currentIndex + 1) % photos.length;
+        setActivePhoto(photos[nextIndex].id);
       } else if (e.key === 'ArrowLeft') {
-        const prevIndex = (currentIndex - 1 + PHOTOS.length) % PHOTOS.length;
-        setActivePhoto(PHOTOS[prevIndex].id);
+        const prevIndex = (currentIndex - 1 + photos.length) % photos.length;
+        setActivePhoto(photos[prevIndex].id);
       } else if (e.key === 'Escape') {
         closeActive();
       }
@@ -53,7 +54,7 @@ export default function Section2({ onNext }) {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activePhoto]);
+  }, [activePhoto, photos]);
 
   // Optional: check if all have been viewed to show "next" button, or just show it after a delay
   const [showNext, setShowNext] = useState(false);
@@ -77,7 +78,7 @@ export default function Section2({ onNext }) {
 
       {/* The Gallery Container */}
       <div className="s2-gallery-container">
-        {PHOTOS.map((photo) => {
+        {photos.map((photo) => {
           const isActive = activePhoto === photo.id;
           const isBlurred = activePhoto !== null && !isActive;
 

@@ -1,13 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { useGift } from '../../context/GiftContext';
 import './Section3.css';
 
 const INITIAL_MESSAGES = [
-  { id: 1, type: 'his', text: 'yenna thungalaya ino ?', time: '11:58 PM', date: 'Today' },
-  { id: 2, type: 'her', text: 'ila inne tha', time: '11:58 PM', date: 'Today' },
-  { id: 3, type: 'his', text: 'Haan seri seri', time: '11:59 PM', date: 'Today' },
-  { id: 4, type: 'her', text: 'thunga poriya nee', time: '11:59 PM', date: 'Today' },
-  { id: 5, type: 'his', text: 'ama thunga poren, goodnight!', time: '11:59 PM', date: 'Today' },
-  { id: 6, type: 'her', text: 'Haan goodnight!!', time: '11:59 PM', date: 'Today' },
+  { id: 1, type: 'his', text: 'Are you still awake?', time: '11:58 PM', date: 'Today' },
+  { id: 2, type: 'her', text: 'Yeah, just reading.', time: '11:58 PM', date: 'Today' },
+  { id: 3, type: 'his', text: 'Okay, cool.', time: '11:59 PM', date: 'Today' },
+  { id: 4, type: 'her', text: 'Are you going to sleep?', time: '11:59 PM', date: 'Today' },
+  { id: 5, type: 'his', text: 'Yeah, going to bed soon, goodnight!', time: '11:59 PM', date: 'Today' },
+  { id: 6, type: 'her', text: 'Goodnight!', time: '11:59 PM', date: 'Today' },
 ];
 
 const BALLOON_CONFIGS = [
@@ -60,12 +61,24 @@ function HeartBalloon({ config }) {
 }
 
 export default function Section3({ onNext }) {
+  const { configData, recipientName } = useGift();
   const [messages, setMessages] = useState(INITIAL_MESSAGES);
   const [status, setStatus] = useState('last seen today at 11:59 PM');
   const [clock, setClock] = useState('11:59 PM');
   const [inputText, setInputText] = useState('');
   const [sendPulse, setSendPulse] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
+
+  const balloons = useMemo(() => {
+    return Array(20).fill(null).map((_, i) => ({
+      id: i,
+      left: `${-5 + Math.random() * 110}%`,
+      delay: `${Math.random() * 10}s`,
+      duration: `${12 + Math.random() * 15}s`,
+      scale: 0.3 + Math.random() * 0.7,
+      rotation: `${-20 + Math.random() * 40}deg`
+    }));
+  }, []);
 
   const scrollRef = useRef(null);
 
@@ -97,9 +110,10 @@ export default function Section3({ onNext }) {
       await sleep(3000);
 
       if (!active) return;
+      const defaultWish1 = `Wishing you a Very Happy Birthday ${recipientName}! 🎂💐🎁💜🌕✨`;
       setMessages((prev) => [
         ...prev,
-        { id: Date.now(), type: 'his', text: 'Wishing you a Very Happiest birthday poojetha🎂💐🎁💜☺️🌕✨', time: '12:00 AM', date: 'Today' },
+        { id: Date.now(), type: 'his', text: configData?.chatMsgHis1 || defaultWish1, time: '12:00 AM', date: 'Today' },
       ]);
       setStatus('online');
       await sleep(2000);
@@ -114,7 +128,7 @@ export default function Section3({ onNext }) {
         {
           id: Date.now() + 1,
           type: 'his',
-          text: 'May all your dreams comes true,you are the best in all ways , thanks for being in my life..once again \n\n Happy Birthday my Best Friend..💜☺️💐🌕♾️❣️',
+          text: configData?.chatMsgHis2 || 'May all your dreams come true, you are the best in all ways, once again... Happy Birthday! 💜☺️💐🌕♾️',
           time: '12:00 AM',
           date: 'Today',
         },
@@ -131,14 +145,15 @@ export default function Section3({ onNext }) {
       };
 
       if (!active) return;
-      await typeText('Thank you so much 😊');
+      const herReply1 = configData?.chatMsgHer1 || 'Thank you so much 😊';
+      await typeText(herReply1);
       await sleep(800);
 
       if (!active) return;
       setInputText('');
       setMessages((prev) => [
         ...prev,
-        { id: Date.now() + 2, type: 'her', text: 'Thank you so much 😊', time: '12:01 AM', date: 'Today' },
+        { id: Date.now() + 2, type: 'her', text: herReply1, time: '12:01 AM', date: 'Today' },
       ]);
       setClock('12:01 AM');
       await sleep(1500);
@@ -153,7 +168,7 @@ export default function Section3({ onNext }) {
         {
           id: Date.now() + 3,
           type: 'his',
-          text: 'intha time la wish panuven nu ninachiya ?',
+          text: configData?.chatMsgHis3 || 'Did you expect a wish at midnight?',
           time: '12:01 AM',
           date: 'Today',
         },
@@ -162,14 +177,15 @@ export default function Section3({ onNext }) {
       await sleep(2000);
 
       if (!active) return;
-      await typeText('ehh sathiyama illa , yaru yenaku sonathu ila ipidi');
+      const herReply2 = configData?.chatMsgHer2 || 'Honestly no, no one has wished me like this before!';
+      await typeText(herReply2);
       await sleep(600);
 
       if (!active) return;
       setInputText('');
       setMessages((prev) => [
         ...prev,
-        { id: Date.now() + 4, type: 'her', text: 'ehh sathiyama illa , yaru yenaku sonathu ila ipidi', time: '12:01 AM', date: 'Today' },
+        { id: Date.now() + 4, type: 'her', text: herReply2, time: '12:01 AM', date: 'Today' },
       ]);
       await sleep(1500);
 
@@ -183,7 +199,7 @@ export default function Section3({ onNext }) {
         {
           id: Date.now() + 5,
           type: 'his',
-          text: 'Haan unaku neraya surprise vachiruken, pakuriya ?',
+          text: configData?.chatMsgHis4 || 'I have a few surprises waiting for you, ready to explore?',
           time: '12:02 AM',
           date: 'Today',
         },
@@ -193,7 +209,8 @@ export default function Section3({ onNext }) {
       await sleep(2500);
 
       if (!active) return;
-      await typeText('Yenathu ?');
+      const herReply3 = configData?.chatMsgHer3 || 'What is it?';
+      await typeText(herReply3);
       setSendPulse(true);
     };
 
@@ -202,7 +219,7 @@ export default function Section3({ onNext }) {
     return () => {
       active = false;
     };
-  }, []);
+  }, [recipientName, configData]);
 
   const handleFinalSend = () => {
     if (!sendPulse) return;
@@ -219,10 +236,27 @@ export default function Section3({ onNext }) {
     }, 1500);
   };
 
+  const senderName = configData?.chatSenderName || configData?.creatorName || 'Best Friend';
+  const profilePic = configData?.profileUrl || '/profile.jpeg';
+
   return (
     <div className={`s3-container ${isExiting ? 'fade-out' : 'fade-in'}`}>
-      <div className="s3-flower-container left">
-        <LavenderFlower />
+      <div className="s3-balloons-container">
+        {balloons.map(b => (
+          <img 
+            key={b.id}
+            src="/section3-balloon-ref.png" 
+            className="s3-floating-balloon"
+            alt="floating balloon"
+            style={{
+              left: b.left,
+              animationDelay: b.delay,
+              animationDuration: b.duration,
+              '--scale': b.scale,
+              '--rotation': b.rotation
+            }}
+          />
+        ))}
       </div>
 
       <div className="wa-app">
@@ -239,10 +273,10 @@ export default function Section3({ onNext }) {
           <div className="wa-header-left">
             <span className="wa-back">←</span>
             <div className="wa-pfp">
-              <img src="/profile.jpeg" alt="Profile" />
+              <img src={profilePic} alt="Profile" />
             </div>
             <div className="wa-user-info">
-              <div className="wa-name">Deepak</div>
+              <div className="wa-name">{senderName}</div>
               <div className="wa-status-text">{status}</div>
             </div>
           </div>
@@ -286,12 +320,6 @@ export default function Section3({ onNext }) {
             {inputText ? '➤' : '🎤'}
           </div>
         </footer>
-      </div>
-
-      <div className="s3-balloon-container right">
-        {BALLOON_CONFIGS.map((config) => (
-          <HeartBalloon key={config.id} config={config} />
-        ))}
       </div>
     </div>
   );

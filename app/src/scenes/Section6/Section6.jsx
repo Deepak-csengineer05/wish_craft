@@ -1,21 +1,13 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import './Section6.css';
+import { useGift } from '../../context/GiftContext';
 import { trackEvent } from '../../analytics';
+import './Section6.css';
 
 const GRID_SIZE = 12;
-const WORDS_DATA = [
-  { question: "What is your nick name?", answer: "LUNAR" },
-  { question: "What color you like?", answer: "VIOLET" },
-  { question: "What is your Zodiac Sign?", answer: "SCORPION" },
-  { question: "What chocolate you like?", answer: "SNICKERS" },
-  { question: "Your little brother name?", answer: "ADITHYA" },
-  { question: "Your little sister name?", answer: "KAVIYA" },
-  { question: "You are from where?", answer: "PALACODE" }
-];
-
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 export default function Section6({ onNext }) {
+  const { giftId, configData } = useGift();
   const [boardData, setBoardData] = useState(null);
   const [foundWords, setFoundWords] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
@@ -47,9 +39,31 @@ export default function Section6({ onNext }) {
     }));
   }, []);
 
+  // Compute active words data from configuration (filter out empty items like siblings)
+  const activeWordsData = useMemo(() => {
+    const raw = [];
+    for (let i = 1; i <= 7; i++) {
+      const q = configData?.[`puzzleQ${i}`];
+      const a = configData?.[`puzzleA${i}`];
+      if (q && a && a.trim().length > 0) {
+        raw.push({ question: q, answer: a.toUpperCase().trim() });
+      }
+    }
+    // Fallback if they configured absolutely nothing
+    if (raw.length === 0) {
+      return [
+        { question: "A shiny object in the night sky?", answer: "STAR" },
+        { question: "This website is a birthday...?", answer: "GIFT" },
+        { question: "A synonym for happiness?", answer: "JOY" },
+        { question: "A feeling of deep affection?", answer: "LOVE" }
+      ];
+    }
+    return raw;
+  }, [configData]);
 
   useEffect(() => {
-    // Generate grid safely once
+    if (activeWordsData.length === 0) return;
+
     const grid = Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(''));
     const wordsPlaced = [];
 
@@ -78,7 +92,7 @@ export default function Section6({ onNext }) {
       [0, 1], [1, 0], [1, 1], [-1, 1], [0, -1], [-1, 0], [-1, -1], [1, -1]
     ];
 
-    WORDS_DATA.forEach(wd => {
+    activeWordsData.forEach(wd => {
       let placed = false;
       let attempts = 0;
       while (!placed && attempts < 500) {
@@ -93,9 +107,8 @@ export default function Section6({ onNext }) {
         }
         attempts++;
       }
-      // Fallback if not placed (rare, but just in case)
       if (!placed) {
-          console.warn("Failed to place word:", wd.answer);
+        console.warn("Failed to place word:", wd.answer);
       }
     });
 
@@ -108,7 +121,7 @@ export default function Section6({ onNext }) {
     }
 
     setBoardData({ grid, wordsPlaced });
-  }, []);
+  }, [activeWordsData]);
 
   const handlePointerDown = (r, c) => {
     setIsDragging(true);
@@ -119,11 +132,9 @@ export default function Section6({ onNext }) {
   const handlePointerEnter = (r, c) => {
     if (!isDragging || !selectionStart) return;
 
-    // Calculate line path
     const dr = r - selectionStart.r;
     const dc = c - selectionStart.c;
     
-    // Ensure straight line (horizontal, vertical, diagonal)
     if (dr === 0 || dc === 0 || Math.abs(dr) === Math.abs(dc)) {
       const steps = Math.max(Math.abs(dr), Math.abs(dc));
       const stepR = steps === 0 ? 0 : dr / steps;
@@ -142,7 +153,6 @@ export default function Section6({ onNext }) {
     setIsDragging(false);
 
     if (currentSelection.length > 0 && boardData) {
-      // Check if selected word matches any required word
       const selectedWordStr = currentSelection.map(coord => {
         const [r, c] = coord.split(',').map(Number);
         return boardData.grid[r][c];
@@ -157,14 +167,14 @@ export default function Section6({ onNext }) {
 
       if (matchedWord) {
         const newFound = [...foundWords, matchedWord.word];
-        trackEvent('Section6', 'word_found', {
+        trackEvent(giftId, 'Section6', 'word_found', {
           word: matchedWord.word,
           foundOrder: newFound.length,
         });
         setFoundWords(newFound);
         setHintedCell(null);
-        if (newFound.length === WORDS_DATA.length) {
-          trackEvent('Section6', 'puzzle_complete', { totalWords: WORDS_DATA.length });
+        if (newFound.length === activeWordsData.length) {
+          trackEvent(giftId, 'Section6', 'puzzle_complete', { totalWords: activeWordsData.length });
           setTimeout(() => setCompleted(true), 1500);
         }
       }
@@ -175,17 +185,15 @@ export default function Section6({ onNext }) {
 
   const giveHint = () => {
     if (!boardData) return;
-    trackEvent('Section6', 'hint_used', { hintsTotal: 'increment' });
+    trackEvent(giftId, 'Section6', 'hint_used', { hintsTotal: 'increment' });
     
-    // Find the first word in WORDS_DATA that hasn't been found yet (ordered 1 to 7)
-    const nextUnfoundWordData = WORDS_DATA.find(wd => !foundWords.includes(wd.answer));
+    const nextUnfoundWordData = activeWordsData.find(wd => !foundWords.includes(wd.answer));
     
     if (nextUnfoundWordData) {
       const targetWord = boardData.wordsPlaced.find(wp => wp.word === nextUnfoundWordData.answer);
       if (targetWord && targetWord.coords.length > 0) {
         setHintedCell(targetWord.coords[0]);
-        // Also auto-scroll mobile carousel to the hinted word's index
-        const index = WORDS_DATA.findIndex(wd => wd.answer === nextUnfoundWordData.answer);
+        const index = activeWordsData.findIndex(wd => wd.answer === nextUnfoundWordData.answer);
         if (index !== -1) setMobileQuestionIndex(index);
       }
     }
@@ -197,7 +205,6 @@ export default function Section6({ onNext }) {
     <div className="section6-container" onPointerUp={handlePointerUp} onPointerLeave={handlePointerUp}>
       <audio autoPlay loop src="/bg-music-3.mp3" style={{ display: 'none' }} />
 
-      {/* Floating Balloons Background */}
       <div className="s6-balloons-container">
         {balloons.map(b => (
           <img 
@@ -255,7 +262,6 @@ export default function Section6({ onNext }) {
               row.map((char, c) => {
                 const coord = `${r},${c}`;
                 const isSelected = currentSelection.includes(coord);
-                // Check if part of already found words
                 const isFound = boardData.wordsPlaced.some(wp => foundWords.includes(wp.word) && wp.coords.includes(coord));
                 const isHinted = hintedCell === coord;
 
@@ -267,7 +273,6 @@ export default function Section6({ onNext }) {
                     data-c={c}
                     onPointerDown={(e) => { e.preventDefault(); handlePointerDown(r, c); }}
                     onPointerEnter={(e) => { e.preventDefault(); handlePointerEnter(r, c); }}
-                    // Touch support requires different handling or rely on pointer events
                   >
                     {char}
                   </div>
@@ -282,13 +287,14 @@ export default function Section6({ onNext }) {
             <div className="mobile-question-carousel">
               <button 
                 className="carousel-nav-btn" 
-                onClick={() => setMobileQuestionIndex((prev) => (prev - 1 + WORDS_DATA.length) % WORDS_DATA.length)}
+                onClick={() => setMobileQuestionIndex((prev) => (prev - 1 + activeWordsData.length) % activeWordsData.length)}
               >
                 &#10094;
               </button>
               <div className="carousel-question-wrapper">
                 {(() => {
-                  const item = WORDS_DATA[mobileQuestionIndex];
+                  const item = activeWordsData[mobileQuestionIndex];
+                  if (!item) return null;
                   const isFound = foundWords.includes(item.answer);
                   return (
                     <div className={`s6-question-item ${isFound ? 'completed' : ''} mobile-card`}>
@@ -304,13 +310,13 @@ export default function Section6({ onNext }) {
               </div>
               <button 
                 className="carousel-nav-btn" 
-                onClick={() => setMobileQuestionIndex((prev) => (prev + 1) % WORDS_DATA.length)}
+                onClick={() => setMobileQuestionIndex((prev) => (prev + 1) % activeWordsData.length)}
               >
                 &#10095;
               </button>
             </div>
           ) : (
-            WORDS_DATA.map((item, idx) => {
+            activeWordsData.map((item, idx) => {
               const isFound = foundWords.includes(item.answer);
               return (
                 <div key={idx} className={`s6-question-item ${isFound ? 'completed' : ''}`}>
