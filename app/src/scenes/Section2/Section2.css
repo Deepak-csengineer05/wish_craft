@@ -324,6 +324,14 @@
   .s2-photo-system.is-active .s2-polaroid {
     transform: translate(-50%, -50%) scale(1.5) !important;
   }
+  .s2-next-btn-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    left: auto;
+    transform: none;
+    z-index: 9999;
+  }
 }
 
 @media (max-width: 480px) {

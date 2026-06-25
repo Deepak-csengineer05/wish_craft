@@ -97,7 +97,7 @@ function StudyWindow() {
 }
 
 /* ── Camera Controller for Focusing ── */
-function CameraController({ focusData }) {
+function CameraController({ focusData, defaultCamPos }) {
   const controls = useRef();
   const isAnimating = useRef(false);
   const currentFocusId = useRef(null);
@@ -110,7 +110,7 @@ function CameraController({ focusData }) {
 
     if (isAnimating.current && controls.current) {
       const targetPos = focusData?.targetPos || new THREE.Vector3(0, 1, 0);
-      const camPos = focusData?.camPos || new THREE.Vector3(2, 3.8, 10.5);
+      const camPos = focusData?.camPos || defaultCamPos;
       
       state.camera.position.lerp(camPos, delta * 5);
       controls.current.target.lerp(targetPos, delta * 5);
@@ -455,6 +455,11 @@ export default function DiaryScene({ onOpen, active, audioControls }) {
   const [focusData, setFocusData] = useState(null);
   const [playerClicks, setPlayerClicks] = useState(0);
 
+  // Dynamic camera calculations for mobile portrait viewports
+  const isMobilePortrait = window.innerWidth < window.innerHeight && window.innerWidth <= 768;
+  const defaultCamPosArray = isMobilePortrait ? [2.8, 5.0, 13.5] : [2, 3.8, 10.5];
+  const defaultCamPos = useMemo(() => new THREE.Vector3(...defaultCamPosArray), [isMobilePortrait]);
+
   const handlePlayerClick = (e) => {
     e.stopPropagation();
     const newCount = (playerClicks + 1) % 2;
@@ -486,7 +491,7 @@ export default function DiaryScene({ onOpen, active, audioControls }) {
     <div style={{ position: 'absolute', inset: 0 }}>
       {/* Unconstrained interactive canvas */}
       <Canvas 
-        camera={{ position: [2, 3.8, 10.5], fov: 46 }} 
+        camera={{ position: defaultCamPosArray, fov: 46 }} 
         shadows={{ type: THREE.PCFShadowMap }}
         gl={{ antialias: true, powerPreference: "high-performance" }}
         onPointerMissed={handleMissed}
@@ -612,7 +617,7 @@ export default function DiaryScene({ onOpen, active, audioControls }) {
           onPointerOut={() => { document.body.style.cursor = 'auto'; }}
         />
 
-        <CameraController focusData={focusData} />
+        <CameraController focusData={focusData} defaultCamPos={defaultCamPos} />
         <ContactShadows position={[0, 0.01, 0]} opacity={0.8} blur={2.5} scale={18} />
 
         {/* ── The Diary ── */}

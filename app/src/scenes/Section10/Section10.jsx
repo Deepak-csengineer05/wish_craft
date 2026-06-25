@@ -278,7 +278,7 @@ export default function Section10({ onNext }) {
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 placeholder="Type your answer here..."
-                autoFocus
+                autoFocus={window.innerWidth > 768}
               />
               <button
                 type="submit"

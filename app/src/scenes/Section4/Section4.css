@@ -315,3 +315,38 @@
   from { opacity: 0; }
   to { opacity: 1; }
 }
+
+@media (max-width: 480px) {
+  .section-heading h1 {
+    font-size: 2.2rem;
+  }
+  .letter-content {
+    padding: 24px 18px;
+    width: 92%;
+    max-height: 80vh;
+  }
+  .letter-body {
+    font-size: 15px;
+    gap: 15px;
+  }
+  .letter-image-container img {
+    max-height: 240px;
+  }
+  .feedback-dialog {
+    padding: 30px 20px;
+  }
+  .feedback-dialog h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+  .feedback-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .feedback-btn {
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 15px;
+  }
+}
+

@@ -421,3 +421,10 @@
   color: #38bdf8;
   background: rgba(255, 255, 255, 0.08);
 }
+
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 30px 20px;
+  }
+}
+

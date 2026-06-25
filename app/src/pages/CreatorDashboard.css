@@ -274,3 +274,43 @@
   margin: 0 auto 25px auto;
   line-height: 1.5;
 }
+
+@media (max-width: 768px) {
+  .db-root {
+    padding: 20px 10px;
+  }
+  .db-header {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+    padding: 20px;
+  }
+  .db-actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+  }
+  .db-actions button {
+    width: 100%;
+  }
+  .db-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+@media (max-width: 400px) {
+  .db-card-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .db-btn-view, .db-btn-your, .db-btn-icon {
+    width: 100%;
+    flex: none;
+  }
+  .db-card-stats {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+

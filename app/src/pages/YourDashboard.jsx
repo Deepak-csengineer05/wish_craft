@@ -889,6 +889,19 @@ export default function YourDashboard() {
         <span>🟢</span> Target is now ONLINE!
       </div>
 
+      {/* Mobile Header (toggles sidebar on small screens) */}
+      <header className="mobile-header">
+        <button className="hamburger-btn" onClick={() => setIsSidebarOpen(true)}>
+          ☰
+        </button>
+        <span className="mobile-header-title">Reaction Control</span>
+      </header>
+
+      {/* Mobile Backdrop (closes sidebar on tap) */}
+      {isSidebarOpen && (
+        <div className="mobile-backdrop" onClick={() => setIsSidebarOpen(false)}></div>
+      )}
+
       <div className={`your-layout ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
 
         {/* Sidebar Navigation */}

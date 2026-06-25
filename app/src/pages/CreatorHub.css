@@ -595,3 +595,10 @@
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(212, 168, 83, 0.35);
 }
+
+@media (max-width: 480px) {
+  .ch-step-node-label {
+    display: none;
+  }
+}
+

@@ -45,6 +45,12 @@ export default function Section1({ onNext, onVideoStart }) {
           <div className="s1-image-container">
             <img src={endImageSrc} alt="End scene" className="s1-end-image" onError={(e) => { e.target.onerror = null; e.target.src = "/section1-end.png"; }} />
             <div className="s1-invisible-trigger" onClick={onNext} title="Click Here to proceed"></div>
+            <button 
+              className={`s1-next-btn ${configData?.profileUrl ? 'is-custom' : ''}`} 
+              onClick={onNext}
+            >
+              Continue ✨
+            </button>
           </div>
         )}
       </div>

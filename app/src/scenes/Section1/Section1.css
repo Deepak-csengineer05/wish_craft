@@ -78,3 +78,43 @@
   background: rgba(255, 255, 255, 0.25); /* A subtle glow feedback when hovering over the "Click Here" button */
   animation: none; /* stop pulsing when they find it */
 }
+
+.s1-next-btn {
+  display: none;
+  background: var(--grad-violet-glow, linear-gradient(135deg, var(--violet, #14b8a6), var(--violet-soft, #0284c7)));
+  color: white;
+  border: 1px solid var(--violet-light, #e0f2fe);
+  padding: 12px 36px;
+  border-radius: 30px;
+  font-family: 'Inter', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 8px 25px var(--violet-glow, rgba(20, 184, 166, 0.4));
+  transition: all 0.3s ease;
+  z-index: 100;
+}
+
+.s1-next-btn:hover {
+  transform: translateY(-2px) translateX(-50%);
+  box-shadow: 0 12px 30px var(--violet-glow, rgba(20, 184, 166, 0.55));
+}
+
+.s1-next-btn.is-custom {
+  display: block;
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+@media (max-width: 768px) {
+  .s1-next-btn {
+    display: block !important;
+    position: fixed;
+    bottom: 35px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+

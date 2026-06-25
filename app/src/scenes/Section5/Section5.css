@@ -124,7 +124,20 @@
 
 @media (max-width: 768px) {
     .icing-text {
-        font-size: 3rem;
+        font-size: 2.4rem;
+    }
+    .cake-message-overlay {
+        right: auto;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 90%;
+        text-align: center;
+        bottom: 30px;
+    }
+    .next-btn {
+        margin-top: 15px;
+        width: 100%;
+        max-width: 250px;
     }
 }
 
