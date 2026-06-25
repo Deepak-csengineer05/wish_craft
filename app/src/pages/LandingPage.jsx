@@ -6,6 +6,9 @@ import './LandingPage.css';
 
 export default function LandingPage() {
   const [user, setUser] = useState(null);
+  const [enteredPasscode, setEnteredPasscode] = useState('');
+  const [passcodeLoading, setPasscodeLoading] = useState(false);
+  const [passcodeError, setPasscodeError] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,6 +30,38 @@ export default function LandingPage() {
       navigate('/dashboard');
     } else {
       navigate('/auth');
+    }
+  };
+
+  const handlePasscodeSubmit = async (e) => {
+    e.preventDefault();
+    setPasscodeError('');
+    const code = enteredPasscode.trim().toUpperCase();
+    if (!code) {
+      setPasscodeError('Please enter a passcode.');
+      return;
+    }
+
+    setPasscodeLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('gifts')
+        .select('id, passcode')
+        .eq('passcode', code)
+        .maybeSingle();
+
+      if (error) throw error;
+
+      if (data) {
+        navigate(`/gift/${code}`);
+      } else {
+        setPasscodeError('We could not find a memory vault matching this code. Please double-check.');
+      }
+    } catch (err) {
+      console.error('Error checking passcode:', err);
+      setPasscodeError('Connection error. Please try again.');
+    } finally {
+      setPasscodeLoading(false);
     }
   };
 
@@ -120,6 +155,34 @@ export default function LandingPage() {
             }}>
               Explore Features
             </button>
+          </motion.div>
+
+          <motion.div 
+            className="lp-passcode-container"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+          >
+            <div className="lp-passcode-divider">
+              <span>OR</span>
+            </div>
+            <div className="lp-passcode-card">
+              <h3 className="lp-passcode-title">🌙 Unseal a Memory Vault</h3>
+              <p className="lp-passcode-subtitle">Received a secret code? Enter it below to begin the magical journey.</p>
+              <form onSubmit={handlePasscodeSubmit} className="lp-passcode-form">
+                <input
+                  type="text"
+                  placeholder="ENTER GIFT CODE"
+                  value={enteredPasscode}
+                  onChange={(e) => setEnteredPasscode(e.target.value.toUpperCase().replace(/[^A-Z0-9-]/g, ''))}
+                  className="lp-passcode-input"
+                />
+                <button type="submit" className="lp-passcode-btn" disabled={passcodeLoading}>
+                  {passcodeLoading ? 'Casting Magic...' : '✦ Cast Magic'}
+                </button>
+              </form>
+              {passcodeError && <div className="lp-passcode-error">⚠️ {passcodeError}</div>}
+            </div>
           </motion.div>
         </main>
       </div>

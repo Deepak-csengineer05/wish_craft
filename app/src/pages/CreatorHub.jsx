@@ -57,6 +57,7 @@ export default function CreatorHub() {
   const [birthday, setBirthday] = useState(''); // YYYY-MM-DD
   const [userPassword, setUserPassword] = useState('');
   const [yourPassword, setyourPassword] = useState('');
+  const [passcode, setPasscode] = useState('');
   const [themeHue, setThemeHue] = useState(198); // 0 - 360
   const [formErrors, setFormErrors] = useState({});
   const [infoMessage, setInfoMessage] = useState(null);
@@ -207,6 +208,7 @@ export default function CreatorHub() {
         setBirthday(data.birthday || '');
         setUserPassword(data.user_password || '');
         setyourPassword(data.your_password || '');
+        setPasscode(data.passcode || '');
         setThemeHue(data.theme_hue ?? 198);
         setActiveSections({
           ...DEFAULT_SECTIONS,
@@ -577,6 +579,13 @@ export default function CreatorHub() {
         bgMusicUrl: finalBgMusicUrl
       };
 
+      let finalPasscode = passcode.trim().toUpperCase();
+      if (!finalPasscode) {
+        const randStr = Math.random().toString(36).substring(2, 6).toUpperCase();
+        const cleanName = recipientName.replace(/[^A-Za-z]/g, '').toUpperCase() || 'FRIEND';
+        finalPasscode = `WISH-${cleanName}-${randStr}`;
+      }
+
       const giftRecord = {
         creator_id: creatorId,
         recipient_name: recipientName,
@@ -585,7 +594,8 @@ export default function CreatorHub() {
         user_password: userPassword,
         your_password: yourPassword,
         active_sections: activeSections,
-        config_data: configData
+        config_data: configData,
+        passcode: finalPasscode
       };
 
       let finalId = editId;
@@ -611,6 +621,7 @@ export default function CreatorHub() {
         finalId = data.id;
       }
 
+      setPasscode(finalPasscode);
       setSuccessGiftId(finalId);
       setStep(6); // Go to final wizard links display step
     } catch (err) {
@@ -863,6 +874,22 @@ export default function CreatorHub() {
                     Please enter the recipient's date of birth in day-month-year format.
                   </span>
                 )}
+              </div>
+            </div>
+
+            <div className="ch-grid-2" style={{ marginTop: '15px' }}>
+              <div className="ch-group" style={{ gridColumn: 'span 2' }}>
+                <label className="ch-label">Custom Memorable Passcode (Optional)</label>
+                <input
+                  type="text"
+                  className="ch-input"
+                  value={passcode}
+                  onChange={(e) => setPasscode(e.target.value.toUpperCase().replace(/[^A-Z0-9-]/g, ''))}
+                  placeholder="e.g. HAPPY-BIRTHDAY-AMIT"
+                />
+                <span style={{ display: 'block', fontSize: '0.8rem', color: 'rgba(255,255,255,0.4)', marginTop: '4px' }}>
+                  A short, easy-to-remember code for the URL (e.g., `HAPPY-AMIT`). Only letters, numbers, and hyphens are allowed. Left blank to auto-generate.
+                </span>
               </div>
             </div>
             <div className="ch-grid-2">
@@ -1909,40 +1936,49 @@ export default function CreatorHub() {
         )}
 
         {/* STEP 6: Completion Page & Links */}
-        {step === 6 && successGiftId && (
-          <div className="ch-success-box">
-            <div className="ch-success-icon">🎉</div>
-            <h2 className="ch-success-title">Your Memory Vault is Ready!</h2>
-            <p className="ch-success-desc">
-              The configurations have been stored successfully. Copy the shareable experience URL for your friend, and keep the your link safe to track their activity.
-            </p>
+        {step === 6 && successGiftId && (() => {
+          const giftShortUrl = `${window.location.origin}/gift/${passcode || successGiftId}`;
+          const monitoringUrl = `${window.location.origin}/gift/${successGiftId}/your`;
+          return (
+            <div className="ch-success-box">
+              <div className="ch-success-icon">🎉</div>
+              <h2 className="ch-success-title">Your Memory Vault is Ready!</h2>
+              <p className="ch-success-desc">
+                The configurations have been stored successfully. Copy the shareable experience URL for your friend, and keep the your link safe to track their activity.
+              </p>
 
-            <div className="ch-success-links">
-              <div className="ch-success-link-item">
-                <span className="ch-success-link-lbl">🎁 Gift URL (Send to friend)</span>
-                <div className="ch-success-link-row">
-                  <span className="ch-success-link-val">{`${window.location.origin}/gift/${successGiftId}`}</span>
-                  <button className="db-copy-btn" onClick={() => handleCopyLink(`${window.location.origin}/gift/${successGiftId}`, 'gift', 'Gift Link')}>
-                    {copiedLinkType === 'gift' ? '✓ Copied!' : 'Copy'}
-                  </button>
+              <div className="ch-success-links">
+                <div className="ch-success-link-item">
+                  <span className="ch-success-link-lbl">🎁 Gift URL (Send to friend)</span>
+                  <div className="ch-success-link-row">
+                    <span className="ch-success-link-val">{giftShortUrl}</span>
+                    <button className="db-copy-btn" onClick={() => handleCopyLink(giftShortUrl, 'gift', 'Gift Link')}>
+                      {copiedLinkType === 'gift' ? '✓ Copied!' : 'Copy'}
+                    </button>
+                  </div>
+                  {passcode && (
+                    <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.4)', marginTop: '6px', textAlign: 'left' }}>
+                      🔑 Gift Code / Passcode: <strong style={{ color: '#38bdf8' }}>{passcode}</strong>
+                    </div>
+                  )}
+                </div>
+                <div className="ch-success-link-item">
+                  <span className="ch-success-link-lbl">📊 your Dashboard (Real-time logs)</span>
+                  <div className="ch-success-link-row">
+                    <span className="ch-success-link-val">{monitoringUrl}</span>
+                    <button className="db-copy-btn" onClick={() => handleCopyLink(monitoringUrl, 'your', 'your Link')}>
+                      {copiedLinkType === 'your' ? '✓ Copied!' : 'Copy'}
+                    </button>
+                  </div>
                 </div>
               </div>
-              <div className="ch-success-link-item">
-                <span className="ch-success-link-lbl">📊 your Dashboard (Real-time logs)</span>
-                <div className="ch-success-link-row">
-                  <span className="ch-success-link-val">{`${window.location.origin}/gift/${successGiftId}/your`}</span>
-                  <button className="db-copy-btn" onClick={() => handleCopyLink(`${window.location.origin}/gift/${successGiftId}/your`, 'your', 'your Link')}>
-                    {copiedLinkType === 'your' ? '✓ Copied!' : 'Copy'}
-                  </button>
-                </div>
-              </div>
+
+              <button className="ch-btn-finish" onClick={() => navigate('/dashboard')}>
+                Go to Dashboard
+              </button>
             </div>
-
-            <button className="ch-btn-finish" onClick={() => navigate('/dashboard')}>
-              Go to Dashboard
-            </button>
-          </div>
-        )}
+          );
+        })()}
 
         {/* Navigation Actions Footer */}
         {step < 6 && (

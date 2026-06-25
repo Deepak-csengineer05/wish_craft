@@ -24,10 +24,16 @@ export function GiftProvider({ children, giftId }) {
     setLoading(true);
     setError(null);
 
+    // Check if giftId is a standard UUID format
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    const isUUID = uuidRegex.test(giftId);
+    const queryField = isUUID ? 'id' : 'passcode';
+    const queryVal = isUUID ? giftId : giftId.toUpperCase();
+
     supabase
       .from('gifts')
       .select('*')
-      .eq('id', giftId)
+      .eq(queryField, queryVal)
       .single()
       .then(({ data, error: dbError }) => {
         if (dbError || !data) {

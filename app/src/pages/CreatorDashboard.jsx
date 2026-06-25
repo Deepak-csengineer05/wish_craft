@@ -176,7 +176,9 @@ export default function CreatorDashboard() {
           <div className="db-grid">
             {gifts.map(gift => {
               const origin = window.location.origin;
-              const recipientUrl = `${origin}/gift/${gift.id}`;
+              const recipientUrl = gift.passcode
+                ? `${origin}/gift/${gift.passcode}`
+                : `${origin}/gift/${gift.id}`;
               const yourUrl = `${origin}/gift/${gift.id}/your`;
 
               // Count active sections in config
@@ -195,6 +197,11 @@ export default function CreatorDashboard() {
                       <div className="db-recipient-name">To: {gift.recipient_name}</div>
                       <span className="db-birthday-label">🎂 {gift.birthday}</span>
                     </div>
+                    {gift.passcode && (
+                      <div style={{ fontSize: '0.8rem', color: '#b39ddb', marginTop: '2px', textAlign: 'left', marginBottom: '8px' }}>
+                        🔑 Code: <strong style={{ color: '#38bdf8' }}>{gift.passcode}</strong>
+                      </div>
+                    )}
 
                     <div className="db-card-stats">
                       <div className="db-stat-item">
